@@ -1,0 +1,107 @@
+<!--
+  Head Component - Reusable HTML head section
+  
+  Description:
+    Contains all meta tags, SEO optimization, CSS/JS includes, and theme configuration.
+    This component should be included at the top of any page that needs the full head setup.
+    
+  Usage:
+    Include this file at the beginning of your HTML files.
+    Update meta tags and configuration as needed.
+    
+  Maintenance:
+    - Keep all comments and content in English
+    - Update meta tags when content changes
+    - Maintain SEO best practices
+-->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>David Fernández-Cuenca Marcos - Software Engineer | Air Traffic Control Systems Specialist</title>
+
+<!-- SEO Meta Tags -->
+<meta name="description" content="David Fernández-Cuenca Marcos - Software Engineer with 10+ years of experience in backend development, AI, and critical systems. Specialist in air traffic control systems at Indra." />
+<meta name="keywords" content="software engineer, backend development, Python, Ada, C, air traffic control, Indra, Node.js, React, machine learning, critical systems, Madrid, Spain" />
+<meta name="author" content="David Fernández-Cuenca Marcos" />
+<meta name="robots" content="index, follow" />
+<meta name="language" content="Spanish, English" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://david-fernandez-cuenca.com/" />
+<meta property="og:title" content="David Fernández-Cuenca Marcos - Software Engineer | Air Traffic Control Systems" />
+<meta property="og:description" content="Software Engineer with 10+ years of experience in backend development, AI, and critical systems. Specialist in air traffic control systems." />
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/22548652?v=4" />
+<meta property="og:site_name" content="David Fernández-Cuenca Portfolio" />
+<meta property="og:locale" content="es_ES" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://david-fernandez-cuenca.com/" />
+<meta property="twitter:title" content="David Fernández-Cuenca Marcos - Software Engineer | Air Traffic Control Systems" />
+<meta property="twitter:description" content="Software Engineer with 10+ years of experience in backend development, AI, and critical systems." />
+<meta property="twitter:image" content="https://avatars.githubusercontent.com/u/22548652?v=4" />
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+<link rel="manifest" href="/site.webmanifest" />
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://david-fernandez-cuenca.com/" />
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_MEASUREMENT_ID');
+</script>
+
+<!-- Preload critical resources -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap"></noscript>
+
+<!-- Tailwind CSS via CDN with fallback -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  // Fallback if CDN fails
+  if (typeof tailwind === 'undefined') {
+    console.warn('Tailwind CDN failed to load, using fallback styles');
+    document.head.insertAdjacentHTML('beforeend', `
+      <style>
+        /* Basic fallback styles */
+        body { font-family: system-ui, sans-serif; margin: 0; padding: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+        .bg-primary { background-color: #0d0d0d; }
+        .bg-secondary { background-color: #1f1f1f; }
+        .text-accent { color: #6366f1; }
+        .text-textLight { color: #f3f4f6; }
+        .text-textMuted { color: #9ca3af; }
+      </style>
+    `);
+  }
+</script>
+
+<!-- Tailwind config: paleta oscura y tipografía -->
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          primary: '#0d0d0d',
+          secondary: '#1f1f1f',
+          accent: '#6366f1',
+          textLight: '#f3f4f6',
+          textMuted: '#9ca3af'
+        },
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          display: ['Poppins', 'sans-serif'],
+        },
+      }
+    }
+  };
+</script> 

@@ -1,13 +1,25 @@
 /*
- * Minimal Node.js server to serve a modern, minimalist portfolio page.  
- * 
- * This server uses only built‑in modules (`http` and `fs`) to avoid pulling in
- * external dependencies. It listens on port 3000 by default and serves
- * content from the `public` directory. If a request is made to a file that
- * doesn't exist, the server responds with the `index.html` file. This allows
- * simple client‑side routing if you later extend the page to be a single
- * page application.
- */
+  server.js - Static File Server for Portfolio
+
+  Description:
+    Minimal Node.js server to serve the professional portfolio of David Fernández-Cuenca Marcos.
+    Uses only built-in modules (http, fs, path) for maximum portability and zero dependencies.
+
+  Usage:
+    - Run `node server.js` to start the server (default port: 3000).
+    - Serves all files from the `public/` directory.
+    - Falls back to `index.html` for unknown routes (SPA-friendly).
+
+  Structure:
+    - Serves static assets (HTML, CSS, JS, images, manifest, etc.).
+    - MIME types are set based on file extension.
+    - Designed for local development and simple deployments.
+
+  Maintenance:
+    - Keep all code and comments in English.
+    - Extend to support HTTPS, logging, or API endpoints as needed.
+    - For production, consider using a dedicated static file server (e.g., Nginx, Vercel, Netlify).
+*/
 
 const http = require('http');
 const fs = require('fs');

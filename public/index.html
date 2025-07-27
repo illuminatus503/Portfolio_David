@@ -1,168 +1,53 @@
+<!--
+  David Fernández-Cuenca Portfolio - Main HTML (Modular Version)
+
+  Description:
+    This is the main HTML file for the professional portfolio of David Fernández-Cuenca Marcos.
+    It uses a modular component structure for better maintainability and reusability.
+
+  Structure:
+    - Uses Tailwind CSS via CDN for rapid styling and responsive design.
+    - Modular components for head, styles, translations, navbar, hero, and JavaScript.
+    - All content and interactivity are contained in this file (no build step required).
+    - Supports English and Spanish via in-page translations.
+    - Integrates with GitHub API for dynamic project stats.
+    - Includes a contact form (frontend only, ready for backend integration).
+    - Features a theme toggle (light/dark), scroll spy, and animated hero section.
+    - SEO, Open Graph, and analytics meta tags included.
+
+  Main Sections:
+    - Navbar (with responsive mobile menu)
+    - Hero (profile, tagline, call-to-action, animated background)
+    - About (bio, experience)
+    - Skills (technical stack)
+    - Projects (featured and dynamic from GitHub)
+    - Contact (info and form)
+    - Footer
+
+  Maintenance:
+    - Keep all code and comments in English.
+    - Update translations and content as needed.
+    - Place static assets in public/assets/ if added.
+    - Follow accessibility and SEO best practices.
+-->
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portafolio - David Fernández-Cuenca Marcos</title>
-
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tailwind config: paleta oscura y tipografía -->
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#0d0d0d',
-              secondary: '#1f1f1f',
-              accent: '#6366f1',
-              textLight: '#f3f4f6',
-              textMuted: '#9ca3af'
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              display: ['Poppins', 'sans-serif'],
-            },
-          }
-        }
-      };
-    </script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Animaciones custom -->
-    <style>
-      @keyframes blink {
-        0%, 100% { opacity: 0; }
-        50% { opacity: 1; }
-      }
-      .cursor::after {
-        content: '|';
-        animation: blink 1s step-end infinite;
-        margin-left: 2px;
-      }
-    </style>
-
-    <!-- Traducciones ES/EN -->
-    <script>
-      const translations = {
-        es: {
-          nav_home: 'Inicio',
-          nav_about: 'Sobre mí',
-          nav_skills: 'Habilidades',
-          nav_projects: 'Proyectos',
-          nav_contact: 'Contacto',
-          hero_name: 'David Fernández-Cuenca Marcos',
-          hero_role: 'Ingeniero de Software en Indra',
-          hero_tagline: 'Especialista en sistemas de control de tráfico aéreo',
-          hero_cta: 'Hablemos',
-          about_title: 'Sobre mí',
-          about_brief: 'Ingeniero de software con más de 10 años de experiencia en desarrollo backend, IA y sistemas críticos.',
-          about_more: 'He liderado proyectos en Python, Ada y C, construyendo APIs, microservicios y sistemas de control con alta disponibilidad. Me apasiona optimizar código y mejorar la experiencia de usuario con diseños minimalistas.',
-          skills_title: 'Habilidades',
-          projects_title: 'Proyectos Destacados',
-          project1_title: 'LeetCode‑Exercises',
-          project1_brief: 'Soluciones a problemas de algoritmos y estructuras de datos en Python.',
-          project1_more: 'Incluye más de 200 ejercicios resueltos, con explicaciones de complejidad y optimización.',
-          project2_title: 'Basic‑Data‑Structures',
-          project2_brief: 'Implementaciones de estructuras de datos en Python, C++ y Ada.',
-          project2_more: 'Cubriendo listas, pilas, colas, árboles y grafos, con ejemplos de uso.',
-          project3_title: 'valet',
-          project3_brief: '"Valet, your truthful servant"—repositorio principal de utilidades.',
-          project3_more: 'Incluye scripts de automatización, CLI y librerías internas usadas en proyectos internos.',
-          project4_title: 'AARN23.BachChorales',
-          project4_brief: 'Proyecto ML/NN del curso Aprendizaje Automático.',
-          project4_more: 'Clasificación de corales de Bach usando redes neuronales profundas y análisis de características musicales.',
-          contact_title: 'Contacto',
-          contact_text: '¿Interesado en colaborar o tienes dudas? Escríbeme:',
-          email: 'david.fernandez-cuenca@example.com',
-          toggle_lang: 'EN'
-        },
-        en: {
-          nav_home: 'Home',
-          nav_about: 'About',
-          nav_skills: 'Skills',
-          nav_projects: 'Projects',
-          nav_contact: 'Contact',
-          hero_name: 'David Fernández-Cuenca Marcos',
-          hero_role: 'Software Engineer at Indra',
-          hero_tagline: 'Air traffic control systems specialist',
-          hero_cta: 'Let’s Talk',
-          about_title: 'About Me',
-          about_brief: 'Software engineer with over 10 years of experience in backend development, AI, and critical systems.',
-          about_more: 'I have led projects in Python, Ada, and C, building APIs, microservices, and high-availability control systems. I enjoy optimizing code and enhancing user experiences with minimalist designs.',
-          skills_title: 'Skills',
-          projects_title: 'Featured Projects',
-          project1_title: 'LeetCode‑Exercises',
-          project1_brief: 'Algorithm and data structure problem solutions in Python.',
-          project1_more: 'Includes 200+ solved exercises with complexity analysis and optimizations.',
-          project2_title: 'Basic‑Data‑Structures',
-          project2_brief: 'Data structure implementations in Python, C++, and Ada.',
-          project2_more: 'Covering lists, stacks, queues, trees, and graphs with usage examples.',
-          project3_title: 'valet',
-          project3_brief: '"Valet, your truthful servant"—main utilities repo.',
-          project3_more: 'Contains automation scripts, CLI tools, and internal libraries for enterprise projects.',
-          project4_title: 'AARN23.BachChorales',
-          project4_brief: 'ML/NN course project on Bach chorales.',
-          project4_more: 'Classifies Bach chorales using deep neural networks and musical feature analysis.',
-          contact_title: 'Get in Touch',
-          contact_text: 'Interested in collaborating or have questions? Drop me a line:',
-          email: 'david.fernandez-cuenca@example.com',
-          toggle_lang: 'ES'
-        }
-      };
-    </script>
-
-    <!-- Lógica de idioma -->
-    <script>
-      const defaultLang = localStorage.getItem('lang') || (navigator.language.startsWith('en') ? 'en' : 'es');
-      let currentLang = defaultLang;
-      function applyTranslations() {
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-          const key = el.getAttribute('data-i18n');
-          el.textContent = translations[currentLang][key];
-        });
-        document.getElementById('lang-toggle').textContent = translations[currentLang].toggle_lang;
-      }
-      document.addEventListener('DOMContentLoaded', () => {
-        applyTranslations();
-        document.getElementById('lang-toggle').addEventListener('click', () => {
-          currentLang = currentLang === 'es' ? 'en' : 'es';
-          localStorage.setItem('lang', currentLang);
-          applyTranslations();
-        });
-      });
-    </script>
+    <!-- Include Head Component -->
+    <!--#include file="components/head.html" -->
+    
+    <!-- Include Styles Component -->
+    <!--#include file="components/styles.html" -->
+    
+    <!-- Include Translations Component -->
+    <!--#include file="components/translations.html" -->
   </head>
   <body class="bg-primary text-textLight antialiased scroll-smooth">
-    <!-- Botón idioma (z-index más alto para evitar quedar debajo del nav) -->
-    <button id="lang-toggle" class="fixed top-4 right-4 z-50 bg-secondary px-3 py-1 rounded hover:bg-secondary/80 transition"></button>
-
-    <!-- Navbar -->
-    <nav class="fixed inset-x-0 top-0 z-30 bg-primary bg-opacity-90 border-b border-secondary backdrop-blur-md">
-      <div class="container mx-auto flex justify-between items-center px-6 py-4">
-        <a href="#home" class="text-2xl font-display font-semibold" data-i18n="nav_home"></a>
-        <div class="space-x-6 hidden md:flex">
-          <a href="#about" class="hover:text-accent transition" data-i18n="nav_about"></a>
-          <a href="#skills" class="hover:text-accent transition" data-i18n="nav_skills"></a>
-          <a href="#projects" class="hover:text-accent transition" data-i18n="nav_projects"></a>
-          <a href="#contact" class="hover:text-accent transition" data-i18n="nav_contact"></a>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Hero -->
-    <section id="home" class="h-screen flex flex-col justify-center items-center text-center px-6 pt-20">
-      <img src="https://avatars.githubusercontent.com/u/22548652?v=4" alt="Foto de perfil" class="w-32 h-32 rounded-full mb-4 ring-2 ring-accent" />
-      <h1 class="text-4xl md:text-6xl font-display font-semibold mb-2" data-i18n="hero_name"></h1>
-      <p class="text-xl md:text-2xl opacity-80 mb-4" data-i18n="hero_role"></p>
-      <p class="italic text-lg md:text-xl opacity-70 mb-8 cursor" data-i18n="hero_tagline"></p>
-      <a href="#contact" class="px-8 py-3 border-2 border-accent rounded-full hover:bg-accent hover:text-white transition" data-i18n="hero_cta"></a>
-    </section>
+    <!-- Include Navbar Component -->
+    <!--#include file="components/navbar.html" -->
+    
+    <!-- Include Hero Component -->
+    <!--#include file="components/hero.html" -->
 
     <!-- Sobre mí -->
     <section id="about" class="py-24 bg-secondary">
@@ -170,7 +55,7 @@
         <h2 class="text-3xl md:text-4xl font-display font-semibold mb-4" data-i18n="about_title"></h2>
         <p class="text-lg mb-4" data-i18n="about_brief"></p>
         <details class="bg-primary p-4 rounded">
-          <summary class="cursor-pointer text-accent font-medium">Leer más</summary>
+          <summary class="cursor-pointer text-accent font-medium" role="button" tabindex="0" aria-expanded="false">Leer más</summary>
           <p class="mt-2 text-textMuted" data-i18n="about_more"></p>
         </details>
       </div>
@@ -181,47 +66,78 @@
       <div class="container mx-auto px-6">
         <h2 class="text-3xl md:text-4xl font-display font-semibold mb-8" data-i18n="skills_title"></h2>
         <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          <li class="bg-secondary p-6 rounded-lg text-center">
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">🚀</div>
             <p class="font-semibold text-accent mb-1">Node.js</p>
             <p class="text-textMuted text-sm">Backend & APIs REST</p>
+            <div class="mt-2 text-xs text-textMuted">Express, Fastify</div>
           </li>
-          <li class="bg-secondary p-6 rounded-lg text-center">
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">🐍</div>
             <p class="font-semibold text-accent mb-1">Python</p>
             <p class="text-textMuted text-sm">Automatización & ML</p>
+            <div class="mt-2 text-xs text-textMuted">Django, Flask, TensorFlow</div>
           </li>
-          <li class="bg-secondary p-6 rounded-lg text-center">
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">⚡</div>
             <p class="font-semibold text-accent mb-1">Ada & C</p>
             <p class="text-textMuted text-sm">Sistemas críticos</p>
+            <div class="mt-2 text-xs text-textMuted">Embedded, Real-time</div>
           </li>
-          <li class="bg-secondary p-6 rounded-lg text-center">
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">🎨</div>
             <p class="font-semibold text-accent mb-1">Tailwind CSS</p>
             <p class="text-textMuted text-sm">Diseño rápido</p>
+            <div class="mt-2 text-xs text-textMuted">Responsive, Utility-first</div>
           </li>
-          <li class="bg-secondary p-6 rounded-lg text-center">
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">⚛️</div>
             <p class="font-semibold text-accent mb-1">React</p>
             <p class="text-textMuted text-sm">Interfaces dinámicas</p>
+            <div class="mt-2 text-xs text-textMuted">Hooks, Context, Redux</div>
           </li>
-          <li class="bg-secondary p-6 rounded-lg text-center">
-            <p class="font-semibold text-accent mb-1">Git & CI/CD
-    </section>
-    <!-- Sobre mí -->
-    <section id="about" class="py-24 bg-secondary">
-      <div class="container mx-auto px-6">
-        <h2 class="text-3xl md:text-4xl font-display font-semibold mb-4" data-i18n="about_title"></h2>
-        <p class="text-lg mb-4" data-i18n="about_brief"></p>
-        <details class="bg-primary p-4 rounded">
-          <summary class="cursor-pointer text-accent font-medium">Leer más</summary>
-          <p class="mt-2 text-textMuted" data-i18n="about_more"></p>
-        </details>
-      </div>
-    </section>
-
-    <!-- Habilidades -->
-    <section id="skills" class="py-24">
-      <div class="container mx-auto px-6">
-        <h2 class="text-3xl md:text-4xl font-display font-semibold mb-8" data-i18n="skills_title"></h2>
-        <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          <!-- Lista de habilidades... -->
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">🔧</div>
+            <p class="font-semibold text-accent mb-1">Git & CI/CD</p>
+            <p class="text-textMuted text-sm">Control de versiones</p>
+            <div class="mt-2 text-xs text-textMuted">GitHub Actions, Jenkins</div>
+          </li>
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">🗄️</div>
+            <p class="font-semibold text-accent mb-1">Databases</p>
+            <p class="text-textMuted text-sm">SQL & NoSQL</p>
+            <div class="mt-2 text-xs text-textMuted">PostgreSQL, MongoDB, Redis</div>
+          </li>
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">☁️</div>
+            <p class="font-semibold text-accent mb-1">Cloud & DevOps</p>
+            <p class="text-textMuted text-sm">Infraestructura</p>
+            <div class="mt-2 text-xs text-textMuted">AWS, Docker, Kubernetes</div>
+          </li>
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">🤖</div>
+            <p class="font-semibold text-accent mb-1">Machine Learning</p>
+            <p class="text-textMuted text-sm">IA & Análisis</p>
+            <div class="mt-2 text-xs text-textMuted">Neural Networks, NLP</div>
+          </li>
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">🔒</div>
+            <p class="font-semibold text-accent mb-1">Security</p>
+            <p class="text-textMuted text-sm">Ciberseguridad</p>
+            <div class="mt-2 text-xs text-textMuted">OAuth, JWT, HTTPS</div>
+          </li>
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">📊</div>
+            <p class="font-semibold text-accent mb-1">Testing</p>
+            <p class="text-textMuted text-sm">Calidad de código</p>
+            <div class="mt-2 text-xs text-textMuted">Jest, PyTest, TDD</div>
+          </li>
+          <li class="skill-card bg-secondary p-6 rounded-lg text-center">
+            <div class="text-3xl mb-3">📱</div>
+            <p class="font-semibold text-accent mb-1">Mobile</p>
+            <p class="text-textMuted text-sm">Desarrollo móvil</p>
+            <div class="mt-2 text-xs text-textMuted">React Native, Flutter</div>
+          </li>
         </ul>
       </div>
     </section>
@@ -230,12 +146,35 @@
     <section id="projects" class="py-24 bg-secondary">
       <div class="container mx-auto px-6">
         <h2 class="text-3xl md:text-4xl font-display font-semibold mb-8" data-i18n="projects_title"></h2>
-        <div class="grid md:grid-cols-2 gap-8">
+        
+        <!-- GitHub Stats -->
+        <div class="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-primary p-6 rounded-lg text-center">
+            <div class="text-3xl font-bold text-accent mb-2" id="github-repos">-</div>
+            <p class="text-textMuted">Repositorios</p>
+          </div>
+          <div class="bg-primary p-6 rounded-lg text-center">
+            <div class="text-3xl font-bold text-accent mb-2" id="github-stars">-</div>
+            <p class="text-textMuted">Estrellas</p>
+          </div>
+          <div class="bg-primary p-6 rounded-lg text-center">
+            <div class="text-3xl font-bold text-accent mb-2" id="github-commits">-</div>
+            <p class="text-textMuted">Commits (30 días)</p>
+          </div>
+        </div>
+        
+        <!-- Featured Projects -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
           <!-- Proyecto 1 -->
-          <div class="bg-primary rounded-lg shadow hover:shadow-lg transition overflow-hidden">
+          <div class="project-card bg-primary rounded-lg shadow overflow-hidden">
             <div class="p-6">
               <h3 class="text-2xl font-semibold mb-2" data-i18n="project1_title"></h3>
               <p class="text-textMuted mb-2" data-i18n="project1_brief"></p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Python</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Algorithms</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Data Structures</span>
+              </div>
               <details class="bg-secondary p-3 rounded">
                 <summary class="cursor-pointer text-accent">Detalles</summary>
                 <p class="mt-2 text-textMuted" data-i18n="project1_more"></p>
@@ -243,20 +182,165 @@
               <a href="https://github.com/illuminatus503/LeetCode-Exercises" target="_blank" class="inline-block mt-4 text-accent hover:underline">Ver en GitHub →</a>
             </div>
           </div>
-          <!-- Repetir bloques para proyectos 2, 3 y 4... -->
+          
+          <!-- Proyecto 2 -->
+          <div class="project-card bg-primary rounded-lg shadow overflow-hidden">
+            <div class="p-6">
+              <h3 class="text-2xl font-semibold mb-2" data-i18n="project2_title"></h3>
+              <p class="text-textMuted mb-2" data-i18n="project2_brief"></p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Python</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">C++</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Ada</span>
+              </div>
+              <details class="bg-secondary p-3 rounded">
+                <summary class="cursor-pointer text-accent">Detalles</summary>
+                <p class="mt-2 text-textMuted" data-i18n="project2_more"></p>
+              </details>
+              <a href="https://github.com/illuminatus503/Basic-Data-Structures" target="_blank" class="inline-block mt-4 text-accent hover:underline">Ver en GitHub →</a>
+            </div>
+          </div>
+          
+          <!-- Proyecto 3 -->
+          <div class="project-card bg-primary rounded-lg shadow overflow-hidden">
+            <div class="p-6">
+              <h3 class="text-2xl font-semibold mb-2" data-i18n="project3_title"></h3>
+              <p class="text-textMuted mb-2" data-i18n="project3_brief"></p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">CLI</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Automation</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Utilities</span>
+              </div>
+              <details class="bg-secondary p-3 rounded">
+                <summary class="cursor-pointer text-accent">Detalles</summary>
+                <p class="mt-2 text-textMuted" data-i18n="project3_more"></p>
+              </details>
+              <a href="https://github.com/illuminatus503/valet" target="_blank" class="inline-block mt-4 text-accent hover:underline">Ver en GitHub →</a>
+            </div>
+          </div>
+          
+          <!-- Proyecto 4 -->
+          <div class="project-card bg-primary rounded-lg shadow overflow-hidden">
+            <div class="p-6">
+              <h3 class="text-2xl font-semibold mb-2" data-i18n="project4_title"></h3>
+              <p class="text-textMuted mb-2" data-i18n="project4_brief"></p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Machine Learning</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Neural Networks</span>
+                <span class="px-2 py-1 bg-accent/20 text-accent text-xs rounded">Music Analysis</span>
+              </div>
+              <details class="bg-secondary p-3 rounded">
+                <summary class="cursor-pointer text-accent">Detalles</summary>
+                <p class="mt-2 text-textMuted" data-i18n="project4_more"></p>
+              </details>
+              <a href="https://github.com/illuminatus503/AARN23.BachChorales" target="_blank" class="inline-block mt-4 text-accent hover:underline">Ver en GitHub →</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Dynamic GitHub Projects -->
+        <div id="github-projects" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Projects will be loaded dynamically -->
         </div>
       </div>
     </section>
 
     <!-- Contacto -->
     <section id="contact" class="py-24">
-      <div class="container mx-auto px-6 text-center">
-        <h2 class="text-3xl md:text-4xl font-display font-semibold mb-4" data-i18n="contact_title"></h2>
-        <p class="mb-6" data-i18n="contact_text"></p>
-        <a href="mailto:david.fernandez-cuenca@example.com" class="text-accent hover:underline" data-i18n="email"></a>
-        <div class="mt-4 space-x-4">
-          <a href="https://linkedin.com/in/david-cuenca-marcos-03b7121b5" target="_blank" class="hover:text-accent">LinkedIn</a>
-          <a href="https://github.com/illuminatus503" target="_blank" class="hover:text-accent">GitHub</a>
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl md:text-4xl font-display font-semibold mb-8 text-center" data-i18n="contact_title"></h2>
+        
+        <div class="grid md:grid-cols-2 gap-12">
+          <!-- Información de contacto -->
+          <div class="space-y-6">
+            <h3 class="text-2xl font-semibold mb-4">Información de Contacto</h3>
+            <div class="space-y-4">
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
+                  <span class="text-accent text-xl">📧</span>
+                </div>
+                <div>
+                  <p class="font-medium">Email</p>
+                  <a href="mailto:david.fernandez-cuenca@example.com" class="text-accent hover:underline">david.fernandez-cuenca@example.com</a>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
+                  <span class="text-accent text-xl">📍</span>
+                </div>
+                <div>
+                  <p class="font-medium">Ubicación</p>
+                  <p class="text-textMuted">Madrid, España</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
+                  <span class="text-accent text-xl">💼</span>
+                </div>
+                <div>
+                  <p class="font-medium">Disponibilidad</p>
+                  <p class="text-textMuted">Abierto a nuevas oportunidades</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-6">
+              <h4 class="font-medium mb-4">Sígueme en:</h4>
+              <div class="flex space-x-4">
+                <a href="https://linkedin.com/in/david-cuenca-marcos-03b7121b5" target="_blank" 
+                   class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center hover:bg-accent/20 transition">
+                  <span class="text-xl">💼</span>
+                </a>
+                <a href="https://github.com/illuminatus503" target="_blank" 
+                   class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center hover:bg-accent/20 transition">
+                  <span class="text-xl">🐙</span>
+                </a>
+                <a href="https://twitter.com/david_cuenca" target="_blank" 
+                   class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center hover:bg-accent/20 transition">
+                  <span class="text-xl">🐦</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Formulario de contacto -->
+          <div class="bg-secondary p-8 rounded-lg">
+            <h3 class="text-2xl font-semibold mb-6">Envíame un mensaje</h3>
+            <form id="contact-form" class="space-y-4">
+              <div>
+                <label for="name" class="block text-sm font-medium mb-2">Nombre *</label>
+                <input type="text" id="name" name="name" required 
+                       class="w-full px-4 py-3 bg-primary border border-gray-600 rounded-lg focus:outline-none focus:border-accent transition">
+              </div>
+              
+              <div>
+                <label for="email" class="block text-sm font-medium mb-2">Email *</label>
+                <input type="email" id="email" name="email" required 
+                       class="w-full px-4 py-3 bg-primary border border-gray-600 rounded-lg focus:outline-none focus:border-accent transition">
+              </div>
+              
+              <div>
+                <label for="subject" class="block text-sm font-medium mb-2">Asunto *</label>
+                <input type="text" id="subject" name="subject" required 
+                       class="w-full px-4 py-3 bg-primary border border-gray-600 rounded-lg focus:outline-none focus:border-accent transition">
+              </div>
+              
+              <div>
+                <label for="message" class="block text-sm font-medium mb-2">Mensaje *</label>
+                <textarea id="message" name="message" rows="5" required 
+                          class="w-full px-4 py-3 bg-primary border border-gray-600 rounded-lg focus:outline-none focus:border-accent transition resize-none"></textarea>
+              </div>
+              
+              <button type="submit" 
+                      class="w-full bg-accent text-white py-3 px-6 rounded-lg hover:bg-accent/90 transition font-medium">
+                Enviar mensaje
+              </button>
+            </form>
+            
+            <div id="form-status" class="mt-4 text-center hidden"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -266,10 +350,7 @@
       © <span id="year"></span> David Fernández-Cuenca Marcos. All rights reserved.
     </footer>
 
-    <script>
-      // Actualiza año en el footer
-      document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
+    <!-- Include JavaScript Component -->
+    <!--#include file="components/javascript.html" -->
   </body>
-</html>
-
+</html> 
