@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favicon Test - David Portfolio</title>
+    
+    <!-- Test all favicon options -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%236366f1' stroke='%234f46e5' stroke-width='1'/><text x='16' y='22' text-anchor='middle' font-family='Arial, sans-serif' font-size='12' fill='%23ffffff' font-weight='bold'>DF</text></svg>" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon-simple.svg" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png" />
+</head>
+<body>
+    <h1>Favicon Test Page</h1>
+    <p>This page tests all favicon options for David's portfolio.</p>
+    <p>Check the browser tab to see if the favicon appears.</p>
+    
+    <h2>Favicon Options:</h2>
+    <ul>
+        <li>Inline SVG (data URL) - Most reliable</li>
+        <li>favicon-simple.svg - Simple initials "DF"</li>
+        <li>favicon.svg - Robot design</li>
+        <li>favicon.ico - Traditional ICO format</li>
+        <li>PNG variants - Different sizes</li>
+    </ul>
+    
+    <h2>Testing Instructions:</h2>
+    <ol>
+        <li>Open this page in Chrome</li>
+        <li>Check if favicon appears in the tab</li>
+        <li>Try refreshing with Ctrl+F5</li>
+        <li>Check browser developer tools for any 404 errors</li>
+    </ol>
+    
+    <script>
+        // Test favicon loading
+        console.log('Testing favicon loading...');
+        
+        // Check if favicon elements exist
+        const favicons = document.querySelectorAll('link[rel*="icon"]');
+        console.log('Found favicon links:', favicons.length);
+        
+        favicons.forEach((link, index) => {
+            console.log(`Favicon ${index + 1}:`, link.href);
+        });
+        
+        // Test if favicon loads
+        const testFavicon = new Image();
+        testFavicon.onload = function() {
+            console.log('✅ Favicon loaded successfully');
+        };
+        testFavicon.onerror = function() {
+            console.log('❌ Favicon failed to load');
+        };
+        testFavicon.src = './assets/favicon-simple.svg';
+    </script>
+</body>
+</html> 

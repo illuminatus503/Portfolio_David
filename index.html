@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d0d0d" />
     <title>David Fernández-Cuenca Marcos - Software Engineer | Air Traffic Control Systems Specialist</title>
     
     <!-- SEO Meta Tags -->
@@ -29,11 +30,16 @@
     <meta property="twitter:image" content="https://avatars.githubusercontent.com/u/22548652?v=4" />
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon-simple.svg" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="./assets/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png" />
+    <link rel="manifest" href="./site.webmanifest" />
+    
+    <!-- Inline Favicon as Fallback -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%236366f1' stroke='%234f46e5' stroke-width='1'/><text x='16' y='22' text-anchor='middle' font-family='Arial, sans-serif' font-size='12' fill='%23ffffff' font-weight='bold'>DF</text></svg>" />
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://david-fernandez-cuenca.com/" />
@@ -47,33 +53,8 @@
       gtag('config', 'GA_MEASUREMENT_ID');
     </script>
 
-    <!-- Preload critical resources -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600&display=swap"></noscript>
-    
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Tailwind config -->
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              primary: '#0d0d0d',
-              secondary: '#1f1f1f',
-              accent: '#6366f1',
-              textLight: '#f3f4f6',
-              textMuted: '#9ca3af'
-            },
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              display: ['Poppins', 'sans-serif'],
-            },
-          }
-        }
-      };
-    </script>
+    <!-- Global CSS with Tailwind -->
+    <link rel="stylesheet" href="./dist/output.css">
     
     <!-- React and ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -82,6 +63,15 @@
   </head>
   <body class="bg-primary text-textLight antialiased scroll-smooth">
     <div id="root"></div>
+    
+    <!-- Component Scripts -->
+    <script type="text/babel" src="./src/components/Navbar.jsx"></script>
+    <script type="text/babel" src="./src/components/Hero.jsx"></script>
+    <script type="text/babel" src="./src/components/About.jsx"></script>
+    <script type="text/babel" src="./src/components/Skills.jsx"></script>
+    <script type="text/babel" src="./src/components/Projects.jsx"></script>
+    <script type="text/babel" src="./src/components/Contact.jsx"></script>
+    <script type="text/babel" src="./src/components/Footer.jsx"></script>
     
     <!-- Main App Script -->
     <script type="text/babel" src="./src/App.jsx"></script>
