@@ -1,211 +1,301 @@
 # Theme System Guide
 
-This document explains how the theme system works in David Fernández-Cuenca's portfolio.
+Comprehensive guide for the dark/light theme system used in David Fernández-Cuenca's portfolio.
 
-## 🎨 Theme Colors
+## 🎨 Theme Overview
 
-### Dark Theme
-- **Primary Background**: `#0d0d0d` (Very dark gray)
-- **Secondary Background**: `#1f1f1f` (Dark gray)
-- **Text Light**: `#f3f4f6` (Light gray)
-- **Text Muted**: `#9ca3af` (Muted gray)
+The portfolio features a sophisticated theme system with:
+- **Dark Mode**: Default theme with dark backgrounds
+- **Light Mode**: Alternative theme with light backgrounds
+- **System Detection**: Automatic theme based on OS preference
+- **Manual Toggle**: User-controlled theme switching
+- **Persistence**: Theme preference saved in localStorage
 
-### Light Theme
-- **Primary Background**: `#ffffff` (White)
-- **Secondary Background**: `#f3f4f6` (Light gray)
-- **Text Light**: `#1f2937` (Dark gray)
-- **Text Muted**: `#6b7280` (Muted gray)
+## 🎯 Implementation
 
-### Accent Color
-- **Primary**: `#6366f1` (Indigo)
-- **Hover**: `#4f46e5` (Darker indigo)
-
-## 🔧 Implementation
-
-### Tailwind Classes Used
-
-#### Background Colors
+### CSS Architecture
 ```css
-/* Dark Theme */
-bg-primary-dark      /* #0d0d0d */
-bg-secondary-dark    /* #1f1f1f */
+/* CSS Variables for Theme Colors */
+:root {
+  /* Light Theme Colors */
+  --color-primary-light: #ffffff;
+  --color-secondary-light: #f3f4f6;
+  --color-text-light: #1f2937;
+  --color-text-muted-light: #6b7280;
+  
+  /* Dark Theme Colors */
+  --color-primary-dark: #0d0d0d;
+  --color-secondary-dark: #1f1f1f;
+  --color-text-dark: #f3f4f6;
+  --color-text-muted-dark: #9ca3af;
+}
 
-/* Light Theme */
-bg-primary-light     /* #ffffff */
-bg-secondary-light   /* #f3f4f6 */
+/* Theme Class Application */
+.dark {
+  --color-primary: var(--color-primary-dark);
+  --color-secondary: var(--color-secondary-dark);
+  --color-text: var(--color-text-dark);
+  --color-text-muted: var(--color-text-muted-dark);
+}
+
+.light {
+  --color-primary: var(--color-primary-light);
+  --color-secondary: var(--color-secondary-light);
+  --color-text: var(--color-text-light);
+  --color-text-muted: var(--color-text-muted-light);
+}
 ```
 
-#### Text Colors
-```css
-/* Dark Theme */
-text-textLight-dark  /* #f3f4f6 */
-text-textMuted-dark  /* #9ca3af */
-
-/* Light Theme */
-text-textLight-light /* #1f2937 */
-text-textMuted-light /* #6b7280 */
+### Tailwind Configuration
+```javascript
+// tailwind.config.js
+module.exports = {
+  darkMode: 'class', // Enable class-based dark mode
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          light: '#ffffff',
+          dark: '#0d0d0d',
+        },
+        secondary: {
+          light: '#f3f4f6',
+          dark: '#1f1f1f',
+        },
+        accent: {
+          DEFAULT: '#6366f1',
+          // ... accent shades
+        },
+        textLight: {
+          light: '#1f2937',
+          dark: '#f3f4f6',
+        },
+      },
+    },
+  },
+}
 ```
 
-### Component Usage
+## 🧩 Component Usage
 
-#### Navbar Component
-The navbar uses dynamic classes based on the current theme:
-
+### Theme Context
 ```jsx
-// Helper function for dynamic theme classes
+// App.jsx - Theme Management
+const [theme, setTheme] = useState('dark');
+
+// Theme initialization
+useEffect(() => {
+  const savedTheme = localStorage.getItem('theme');
+  if (!savedTheme) {
+    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    setTheme(systemTheme);
+  } else {
+    setTheme(savedTheme);
+  }
+}, []);
+
+// Theme application
+useEffect(() => {
+  const html = document.documentElement;
+  html.classList.remove('dark', 'light');
+  html.classList.add(theme);
+  localStorage.setItem('theme', theme);
+}, [theme]);
+```
+
+### Component Styling
+```jsx
+// Component with theme-aware styling
+function MyComponent() {
+  const { theme } = useAppContext();
+  
+  // Helper function for dynamic classes
+  const getThemeClasses = (baseClasses, darkClasses, lightClasses) => {
+    const themeSpecific = theme === 'dark' ? darkClasses : lightClasses;
+    return `${baseClasses} ${themeSpecific}`;
+  };
+  
+  return (
+    <div className={getThemeClasses(
+      'card transition-colors duration-300',
+      'bg-gray-800 text-white border-gray-700',
+      'bg-white text-gray-900 border-gray-200'
+    )}>
+      {/* Component content */}
+    </div>
+  );
+}
+```
+
+## 🎨 Color Palette
+
+### Primary Colors
+- **Dark Background**: `#0d0d0d` (Very dark gray)
+- **Light Background**: `#ffffff` (Pure white)
+- **Accent**: `#6366f1` (Indigo)
+
+### Secondary Colors
+- **Dark Secondary**: `#1f1f1f` (Dark gray)
+- **Light Secondary**: `#f3f4f6` (Light gray)
+- **Accent Hover**: `#4f46e5` (Darker indigo)
+
+### Text Colors
+- **Dark Text**: `#f3f4f6` (Light gray)
+- **Light Text**: `#1f2937` (Dark gray)
+- **Muted Text**: `#9ca3af` (Medium gray)
+
+## 🔧 Helper Functions
+
+### Theme Class Generator
+```jsx
+// Utility function for theme-aware classes
 const getThemeClasses = (baseClasses, darkClasses, lightClasses) => {
   const themeSpecific = theme === 'dark' ? darkClasses : lightClasses;
   return `${baseClasses} ${themeSpecific}`;
 };
 
-// Usage example
-<nav className={getThemeClasses(
-  'fixed inset-x-0 top-0 z-50 backdrop-blur-md border-b transition-colors duration-300',
-  'bg-primary-dark/90 border-secondary-dark',
-  'bg-primary-light/90 border-secondary-light'
-)}>
+// Usage examples
+const buttonClasses = getThemeClasses(
+  'btn transition-colors duration-200',
+  'bg-gray-700 text-white hover:bg-gray-600',
+  'bg-gray-200 text-gray-900 hover:bg-gray-300'
+);
+
+const cardClasses = getThemeClasses(
+  'card shadow-md',
+  'bg-gray-800 border-gray-700',
+  'bg-white border-gray-200'
+);
 ```
 
-#### Theme Toggle
-The theme toggle switches between 'dark' and 'light' modes:
-
+### Common Theme Patterns
 ```jsx
-const toggleTheme = () => {
-  setTheme(theme === 'dark' ? 'light' : 'dark');
-};
+// Background patterns
+const bgClasses = getThemeClasses(
+  'transition-colors duration-300',
+  'bg-gray-900',
+  'bg-white'
+);
+
+// Text patterns
+const textClasses = getThemeClasses(
+  'transition-colors duration-300',
+  'text-white',
+  'text-gray-900'
+);
+
+// Border patterns
+const borderClasses = getThemeClasses(
+  'border transition-colors duration-300',
+  'border-gray-700',
+  'border-gray-200'
+);
 ```
 
-## 🎯 Theme Switching
+## 🎯 Best Practices
 
-### How It Works
-1. **State Management**: Theme is stored in React state and localStorage
-2. **CSS Classes**: The `dark` or `light` class is applied to the `<html>` element
-3. **Tailwind Integration**: Tailwind's `darkMode: 'class'` configuration responds to these classes
-4. **Dynamic Classes**: Components use conditional classes based on the current theme
-
-### Theme Persistence
-- **localStorage**: Theme preference is saved and restored on page load
-- **System Preference**: Falls back to system preference if no saved theme
-- **Default**: Dark theme if no preference is available
-
-## 📱 Responsive Design
-
-### Mobile Considerations
-- **Touch Targets**: Minimum 44px for touch interactions
-- **Contrast**: High contrast ratios for accessibility
-- **Readability**: Appropriate text sizes for mobile screens
-
-### Breakpoints
-- **Mobile**: < 640px
-- **Tablet**: 640px - 1024px
-- **Desktop**: > 1024px
-
-## ♿ Accessibility
-
-### Color Contrast
-- **WCAG AA**: All text meets accessibility standards
-- **High Contrast**: Support for high contrast mode
-- **Reduced Motion**: Respects user motion preferences
-
-### Focus States
-- **Visible Focus**: Clear focus indicators for keyboard navigation
-- **Color Independent**: Focus states work in both themes
-
-## 🔄 Transitions
-
-### Smooth Theme Switching
-- **Duration**: 300ms transitions for color changes
-- **Properties**: Background, text, and border colors
-- **Performance**: Hardware-accelerated transitions
-
-### CSS Variables
-```css
-:root {
-  --transition-normal: 0.3s ease-in-out;
-}
-
-* {
-  transition: background-color var(--transition-normal), 
-              color var(--transition-normal), 
-              border-color var(--transition-normal);
-}
-```
-
-## 🚀 Best Practices
-
-### Component Development
-1. **Use Helper Function**: Always use `getThemeClasses()` for dynamic styling
-2. **Test Both Themes**: Verify components work in both light and dark modes
-3. **Accessibility First**: Ensure proper contrast and focus states
-4. **Performance**: Minimize re-renders during theme switching
+### Component Design
+1. **Always use theme context**: Access theme from `useAppContext()`
+2. **Use helper functions**: Leverage `getThemeClasses()` for consistency
+3. **Include transitions**: Add `transition-colors duration-300` for smooth switching
+4. **Test both themes**: Verify appearance in light and dark modes
+5. **Consider contrast**: Ensure text is readable in both themes
 
 ### CSS Guidelines
-1. **CSS Variables**: Use CSS custom properties for theme values
-2. **Tailwind Classes**: Prefer Tailwind utilities over custom CSS
-3. **Responsive**: Design for all screen sizes
-4. **Progressive Enhancement**: Ensure functionality without JavaScript
+1. **Use CSS variables**: Define colors in `:root` for consistency
+2. **Leverage Tailwind**: Use utility classes for theme-specific styling
+3. **Maintain hierarchy**: Keep color relationships consistent
+4. **Optimize performance**: Use efficient selectors and minimal repaints
 
-## 🐛 Troubleshooting
+### Accessibility
+1. **High contrast**: Ensure sufficient contrast ratios
+2. **Color independence**: Don't rely solely on color for information
+3. **Focus states**: Maintain visible focus indicators in both themes
+4. **Reduced motion**: Respect `prefers-reduced-motion` preference
+
+## 🔄 Theme Switching
+
+### User Interface
+```jsx
+// Theme toggle button
+<button
+  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+  className={getThemeClasses(
+    'px-3 py-1 rounded transition-colors duration-200',
+    'bg-gray-700 text-white hover:bg-gray-600',
+    'bg-gray-200 text-gray-900 hover:bg-gray-300'
+  )}
+  aria-label="Toggle theme"
+>
+  {theme === 'dark' ? '☀️' : '🌙'}
+</button>
+```
+
+### System Integration
+```jsx
+// Listen for system theme changes
+useEffect(() => {
+  const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+  
+  const handleChange = (e) => {
+    if (!localStorage.getItem('theme')) {
+      setTheme(e.matches ? 'dark' : 'light');
+    }
+  };
+  
+  mediaQuery.addEventListener('change', handleChange);
+  return () => mediaQuery.removeEventListener('change', handleChange);
+}, []);
+```
+
+## 🧪 Testing
+
+### Manual Testing
+1. **Toggle themes**: Use theme button to switch between modes
+2. **System detection**: Change OS theme preference
+3. **Persistence**: Refresh page to verify saved preference
+4. **Transitions**: Verify smooth color transitions
+
+### Automated Testing
+```javascript
+// Test theme switching
+test('theme switches correctly', () => {
+  render(<App />);
+  const toggle = screen.getByLabelText('Toggle theme');
+  
+  fireEvent.click(toggle);
+  expect(document.documentElement).toHaveClass('light');
+  
+  fireEvent.click(toggle);
+  expect(document.documentElement).toHaveClass('dark');
+});
+```
+
+### Browser Testing
+- **Chrome**: Primary testing browser
+- **Firefox**: CSS variable support
+- **Safari**: System theme detection
+- **Edge**: Windows integration
+
+## 🔧 Troubleshooting
 
 ### Common Issues
-
-#### Theme Not Switching
-- Check if `theme` state is updating correctly
-- Verify `localStorage` is working
-- Ensure CSS classes are being applied to `<html>`
-
-#### Colors Not Updating
-- Verify Tailwind classes are correct
-- Check if `getThemeClasses()` is being used
-- Ensure CSS variables are defined
-
-#### Performance Issues
-- Use `useCallback` for theme toggle functions
-- Minimize re-renders with `React.memo`
-- Optimize CSS transitions
+1. **Theme not switching**: Check localStorage and class application
+2. **Flickering**: Ensure theme is applied before render
+3. **Inconsistent colors**: Verify CSS variable definitions
+4. **Performance**: Optimize theme switching logic
 
 ### Debug Tools
 ```javascript
-// Check current theme
+// Debug theme state
 console.log('Current theme:', theme);
-
-// Check localStorage
-console.log('Saved theme:', localStorage.getItem('theme'));
-
-// Check HTML classes
 console.log('HTML classes:', document.documentElement.className);
+console.log('localStorage:', localStorage.getItem('theme'));
 ```
 
-## 📋 Testing Checklist
+## 📚 Related Documentation
 
-- [ ] Theme switches correctly between light and dark
-- [ ] Theme preference is saved in localStorage
-- [ ] System preference is detected on first visit
-- [ ] All components adapt to theme changes
-- [ ] Colors have proper contrast ratios
-- [ ] Focus states are visible in both themes
-- [ ] Transitions are smooth and performant
-- [ ] Mobile menu works in both themes
-- [ ] No layout shifts during theme switching
-- [ ] Print styles work correctly
-
-## 🎨 Customization
-
-### Adding New Colors
-1. Update `tailwind.config.js` with new color definitions
-2. Add corresponding CSS variables in `globals.css`
-3. Update component classes to use new colors
-4. Test in both themes
-
-### Modifying Transitions
-1. Update CSS variables in `:root`
-2. Modify transition classes in components
-3. Test performance impact
-4. Ensure accessibility compliance
-
-## 📚 Resources
-
-- [Tailwind CSS Dark Mode](https://tailwindcss.com/docs/dark-mode)
-- [WCAG Color Contrast](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html)
-- [CSS Custom Properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties)
-- [React Context API](https://reactjs.org/docs/context.html) 
+- **[Main README](./README.md)** - Project overview
+- **[Source README](./src/README.md)** - Component documentation
+- **[Assets README](./assets/README.md)** - Static assets
+- **[Tailwind Config](./tailwind.config.js)** - Tailwind configuration 

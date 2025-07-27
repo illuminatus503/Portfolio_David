@@ -1,171 +1,277 @@
-# David Fernández-Cuenca Portfolio - React Version
+# David Fernández-Cuenca Portfolio
 
-A modern, professional portfolio built with React for David Fernández-Cuenca Marcos, Software Engineer specialized in air traffic control systems.
+A modern, responsive portfolio website built with React, Tailwind CSS, and TypeScript. Features dark/light mode, internationalization, and PWA capabilities.
 
-## 🚀 Features
+## 🚀 Quick Start
 
-- **Modern React Architecture**: Built with React 18 and modern JavaScript
-- **Responsive Design**: Mobile-first approach with Tailwind CSS
-- **Bilingual Support**: Spanish and English with automatic language detection
-- **Dark/Light Theme**: Theme toggle with system preference detection
-- **Dynamic Content**: GitHub API integration for real-time project data
-- **Interactive UI**: Smooth animations and hover effects
-- **SEO Optimized**: Meta tags, Open Graph, and Twitter Cards
-- **Accessibility**: ARIA labels and keyboard navigation
-- **PWA Ready**: Progressive Web App features
+```bash
+# Install dependencies
+npm install
 
-## 🛠️ Tech Stack
+# Start development server
+npm run dev
 
-- **Frontend**: React 18, Babel (standalone)
-- **Styling**: Tailwind CSS
-- **Icons**: Emoji icons for simplicity
-- **Fonts**: Inter & Poppins (Google Fonts)
-- **Deployment**: Vercel-ready configuration
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Development](#-development)
+- [Deployment](#-deployment)
+- [Customization](#-customization)
+- [Documentation](#-documentation)
+- [Contributing](#-contributing)
+
+## ✨ Features
+
+### Core Features
+- **Responsive Design**: Mobile-first approach with adaptive layouts
+- **Dark/Light Mode**: Theme switching with system preference detection
+- **Internationalization**: Spanish and English language support
+- **PWA Ready**: Progressive Web App capabilities
+- **SEO Optimized**: Meta tags, Open Graph, and structured data
+- **Accessibility**: WCAG AA compliant with keyboard navigation
+
+### Technical Features
+- **React 18**: Modern React with hooks and context
+- **Tailwind CSS**: Utility-first styling with custom design system
+- **TypeScript**: Type safety and better development experience
+- **Vercel Ready**: Optimized for Vercel deployment
+- **Performance**: Optimized loading and rendering
+- **Analytics**: Google Analytics integration
+
+## 🛠 Tech Stack
+
+### Frontend
+- **React 18** - UI framework
+- **Tailwind CSS** - Styling framework
+- **TypeScript** - Type safety
+- **Babel** - JSX compilation
+
+### Development Tools
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+- **PostCSS** - CSS processing
+- **Autoprefixer** - CSS vendor prefixing
+
+### Deployment
+- **Vercel** - Hosting platform
+- **GitHub** - Version control
 
 ## 📁 Project Structure
 
 ```
 portfolio-react/
-├── index.html              # Main HTML file
-├── src/
-│   ├── App.jsx             # Main React app
-│   └── components/         # React components
-│       ├── Navbar.jsx      # Navigation component
-│       ├── Hero.jsx        # Hero section
-│       ├── About.jsx       # About section
-│       ├── Skills.jsx      # Skills section
-│       ├── Projects.jsx    # Projects section
-│       ├── Contact.jsx     # Contact section
-│       └── Footer.jsx      # Footer component
-├── package.json            # Dependencies and scripts
-├── vercel.json            # Vercel configuration
-└── README.md              # This file
+├── 📄 README.md                 # Main documentation
+├── 📄 index.html                # Entry point
+├── 📄 package.json              # Dependencies and scripts
+├── 📄 tailwind.config.js        # Tailwind configuration
+├── 📄 postcss.config.js         # PostCSS configuration
+├── 📄 vercel.json               # Vercel deployment config
+├── 📄 tsconfig.json             # TypeScript configuration
+├── 📄 .eslintrc.json            # ESLint configuration
+├── 📄 .prettierrc               # Prettier configuration
+├── 📄 .gitignore                # Git ignore rules
+├── 📄 site.webmanifest          # PWA manifest
+├── 📄 THEME_GUIDE.md            # Theme system documentation
+├── 📄 test-favicon.html         # Favicon testing page
+│
+├── 📁 src/                      # Source code
+│   ├── 📄 globals.css           # Global styles and Tailwind
+│   ├── 📄 App.jsx               # Main React component
+│   ├── 📄 types.d.ts            # TypeScript definitions
+│   ├── 📄 analytics.js          # Analytics utilities
+│   ├── 📄 README.md             # Source code documentation
+│   │
+│   └── 📁 components/           # React components
+│       ├── 📄 Navbar.jsx        # Navigation component
+│       ├── 📄 Hero.jsx          # Hero section
+│       ├── 📄 About.jsx         # About section
+│       ├── 📄 Skills.jsx        # Skills section
+│       ├── 📄 Projects.jsx      # Projects section
+│       ├── 📄 Contact.jsx       # Contact section
+│       └── 📄 Footer.jsx        # Footer component
+│
+├── 📁 assets/                   # Static assets
+│   ├── 📄 README.md             # Assets documentation
+│   ├── 📄 favicon.svg           # Robot favicon
+│   ├── 📄 favicon-simple.svg    # Simple version
+│   ├── 📄 favicon.ico           # Traditional favicon
+│   ├── 📄 favicon-16x16.png     # 16x16 PNG favicon
+│   ├── 📄 favicon-32x32.png     # 32x32 PNG favicon
+│   ├── 📄 apple-touch-icon.png  # iOS touch icon
+│   ├── 📄 android-chrome-192x192.png # Android icon
+│   └── 📄 android-chrome-512x512.png # PWA icon
+│
+└── 📁 dist/                     # Build output
+    └── 📄 output.css            # Compiled CSS
 ```
 
-## 🚀 Getting Started
+## 🚀 Development
 
 ### Prerequisites
+- Node.js 16+ 
+- npm or yarn
 
-- Node.js 16+ (for development)
-- Modern web browser
+### Setup
+```bash
+# Clone repository
+git clone <repository-url>
+cd portfolio-react
 
-### Installation
+# Install dependencies
+npm install
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd portfolio-react
-   ```
+# Start development server
+npm run dev
+```
 
-2. **Install dependencies** (optional, for development)
-   ```bash
-   npm install
-   ```
+### Available Scripts
+```bash
+npm run dev          # Start development server with CSS build
+npm run build        # Build for production
+npm run build:css    # Build CSS only
+npm run watch:css    # Watch CSS changes
+npm run start        # Start production server
+npm run preview      # Preview production build
+npm run lint         # Lint code
+npm run type-check   # TypeScript type checking
+npm run format       # Format code
+```
 
-3. **Run locally**
-   ```bash
-   npm run dev
-   # or
-   npx serve . -p 3000
-   ```
-
-4. **Open in browser**
-   ```
-   http://localhost:3000
-   ```
+### Development Workflow
+1. **Start Development**: `npm run dev`
+2. **Edit Components**: Modify files in `src/components/`
+3. **Update Styles**: Edit `src/globals.css` or use Tailwind classes
+4. **Test Changes**: Browser will auto-reload
+5. **Build**: `npm run build` for production
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
-
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin main
-   ```
-
-2. **Deploy to Vercel**
-   - Connect your GitHub repository to Vercel
-   - Vercel will automatically detect the configuration
-   - Deploy with one click
-
-### Manual Build
+### Vercel Deployment
+The project is optimized for Vercel deployment:
 
 ```bash
-npm run build
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Or connect GitHub repository for automatic deployments
 ```
+
+### Manual Deployment
+```bash
+# Build project
+npm run build
+
+# Deploy dist/ folder to your hosting provider
+```
+
+### Environment Variables
+No environment variables required for basic functionality.
 
 ## 🎨 Customization
 
-### Colors
-Edit the Tailwind config in `index.html`:
-```javascript
-colors: {
-  primary: '#0d0d0d',    // Background
-  secondary: '#1f1f1f',  // Cards
-  accent: '#6366f1',     // Primary accent
-  textLight: '#f3f4f6',  // Light text
-  textMuted: '#9ca3af'   // Muted text
-}
-```
+### Colors and Theme
+Edit `tailwind.config.js` to customize:
+- Color palette
+- Typography
+- Spacing
+- Animations
 
 ### Content
-- Update personal information in each component
-- Modify translations in component files
-- Replace GitHub username in `Projects.jsx`
+Update component files in `src/components/`:
+- Personal information
+- Projects
+- Skills
+- Contact details
 
 ### Styling
-- Modify Tailwind classes in components
-- Add custom CSS in the `<style>` tag in `index.html`
+Modify `src/globals.css` for:
+- Custom CSS
+- Component styles
+- Utility classes
 
-## 📱 Responsive Design
+### Favicon
+Replace files in `assets/` directory:
+- `favicon.svg` - Main favicon
+- `favicon-simple.svg` - Simple version
+- PNG variants for different sizes
 
-The portfolio is fully responsive with breakpoints:
-- **Mobile**: < 768px
-- **Tablet**: 768px - 1024px
-- **Desktop**: > 1024px
+## 📚 Documentation
 
-## 🌐 Internationalization
+### Documentation Hub
+- **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Complete documentation index
+- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Technical development guide
 
-Supports Spanish and English with:
-- Automatic language detection
-- Manual language toggle
-- Persistent language preference
+### Core Documentation
+- **[README.md](./README.md)** - Main project documentation
+- **[THEME_GUIDE.md](./THEME_GUIDE.md)** - Theme system guide
+- **[src/README.md](./src/README.md)** - Source code documentation
+- **[assets/README.md](./assets/README.md)** - Assets documentation
 
-## 🎯 Performance
+### Key Concepts
+- **Theme System**: Dark/light mode with CSS variables
+- **Component Architecture**: Modular React components
+- **Styling Strategy**: Tailwind CSS with custom components
+- **Internationalization**: Multi-language support
+- **PWA Features**: Service worker and manifest
 
-- **Lazy loading**: Images and components
-- **CDN resources**: React, Tailwind CSS
-- **Optimized fonts**: Google Fonts with preload
-- **Minimal dependencies**: No build step required
+### Development Guidelines
+- **Code Style**: ESLint + Prettier configuration
+- **Type Safety**: TypeScript for better development
+- **Performance**: Optimized builds and lazy loading
+- **Accessibility**: WCAG AA compliance
+- **SEO**: Meta tags and structured data
 
-## 🔧 Development
+## 🤝 Contributing
 
-### Adding New Components
+### Development Setup
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
 
-1. Create component file in `src/components/`
-2. Add component script to `index.html`
-3. Import and use in `App.jsx`
+### Code Standards
+- Follow ESLint rules
+- Use Prettier for formatting
+- Write TypeScript for type safety
+- Add comments for complex logic
+- Update documentation as needed
 
-### Adding New Features
-
-- Follow React best practices
-- Use the existing context for state management
-- Maintain responsive design principles
-- Add translations for new text
+### Testing
+- Test in multiple browsers
+- Verify responsive design
+- Check accessibility
+- Validate performance
 
 ## 📄 License
 
-MIT License - see LICENSE file for details
+MIT License - see [LICENSE](./LICENSE) file for details.
 
 ## 👨‍💻 Author
 
 **David Fernández-Cuenca Marcos**
-- Software Engineer at Indra
-- Specialized in air traffic control systems
+- Software Engineer specializing in air traffic control systems
 - 10+ years of experience in backend development
+- Expert in Python, Ada, C, and critical systems
+
+## 🔗 Links
+
+- **Portfolio**: [david-fernandez-cuenca.com](https://david-fernandez-cuenca.com)
+- **GitHub**: [@illuminatus503](https://github.com/illuminatus503)
+- **LinkedIn**: [David Fernández-Cuenca](https://linkedin.com/in/david-fernandez-cuenca)
 
 ---
 
-Built with ❤️ using React and Tailwind CSS 
+**Built with ❤️ using React, Tailwind CSS, and TypeScript** 
