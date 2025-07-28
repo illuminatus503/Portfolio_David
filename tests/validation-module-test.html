@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validation Module Test</title>
+    <link rel="stylesheet" href="../dist/output.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-panel { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            width: 350px; 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            padding: 15px; 
+            font-size: 12px; 
+            z-index: 1000;
+        }
+        .status { margin: 5px 0; padding: 5px; border-radius: 3px; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .log { 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 10px;
+        }
+        .main-content { margin-right: 370px; }
+        .button { 
+            padding: 8px 16px; 
+            margin: 5px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 12px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 2px solid #007bff; 
+            border-radius: 8px; 
+            background: #f8f9fa;
+        }
+        .test-form {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .validation-status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .status-valid { background: #d4edda; color: #155724; }
+        .status-invalid { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="test-panel">
+        <h3>🔍 Validation Module Test</h3>
+        <div id="status"></div>
+        <div class="log" id="log"></div>
+        <button class="button btn-primary" onclick="testValidationModule()">Test Module</button>
+        <button class="button btn-success" onclick="testFormValidation()">Test Form</button>
+        <button class="button btn-warning" onclick="testTranslations()">Test Translations</button>
+        <button class="button btn-danger" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Validation Module Test</h1>
+        <p>This test verifies that the validation module works correctly with form validation and translations.</p>
+        
+        <div class="section">
+            <h2>Test Instructions:</h2>
+            <ol>
+                <li>Test the validation module functions</li>
+                <li>Test form validation with the module</li>
+                <li>Test translation integration</li>
+                <li>Verify error messages and button states</li>
+            </ol>
+        </div>
+
+        <!-- Test Form -->
+        <div class="test-form">
+            <h2>Form Validation Test</h2>
+            <form id="testForm">
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" name="name" required>
+                    <div class="error-message" id="nameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <input type="text" id="subject" name="subject" required>
+                    <div class="error-message" id="subjectError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" required></textarea>
+                    <div class="error-message" id="messageError"></div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="button btn-primary" disabled>
+                    Send Message
+                </button>
+            </form>
+
+            <div id="validationStatus" class="validation-status status-invalid">
+                Validation Status: Invalid
+            </div>
+        </div>
+    </div>
+
+    <!-- React -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Load locales first -->
+    <script type="text/babel" src="../src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="../src/i18n/locales/es.js"></script>
+    
+    <!-- Load i18n system -->
+    <script type="text/babel" src="../src/i18n/useTranslation.js"></script>
+
+    <!-- Load validation module -->
+    <script type="text/babel" src="../src/utils/validation.js"></script>
+
+    <script type="text/babel">
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+        const submitBtn = document.getElementById('submitBtn');
+        const validationStatusDiv = document.getElementById('validationStatus');
+        
+        function addStatus(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            
+            while (statusDiv.children.length > 5) {
+                statusDiv.removeChild(statusDiv.firstChild);
+            }
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(div);
+            
+            while (logDiv.children.length > 15) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+            
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '';
+            addLog('Log cleared');
+        }
+
+        function testValidationModule() {
+            addLog('🧪 Testing validation module...');
+            
+            // Test if validation functions are available
+            if (window.validateField && window.validateForm && window.useFormValidation) {
+                addLog('✅ Validation functions available');
+                addStatus('Validation module loaded', 'success');
+                
+                // Test individual field validation
+                const testCases = [
+                    { field: 'name', value: '', expected: 'validation.name.required' },
+                    { field: 'name', value: 'A', expected: 'validation.name.minLength' },
+                    { field: 'name', value: 'John Doe', expected: '' },
+                    { field: 'email', value: '', expected: 'validation.email.required' },
+                    { field: 'email', value: 'invalid-email', expected: 'validation.email.pattern' },
+                    { field: 'email', value: 'test@example.com', expected: '' },
+                    { field: 'subject', value: '', expected: 'validation.subject.required' },
+                    { field: 'subject', value: 'Hi', expected: 'validation.subject.minLength' },
+                    { field: 'subject', value: 'Test Subject', expected: '' },
+                    { field: 'message', value: '', expected: 'validation.message.required' },
+                    { field: 'message', value: 'Short', expected: 'validation.message.minLength' },
+                    { field: 'message', value: 'This is a valid message with enough characters.', expected: '' }
+                ];
+                
+                let passedTests = 0;
+                testCases.forEach((testCase, index) => {
+                    const result = window.validateField(testCase.field, testCase.value);
+                    const passed = result === testCase.expected;
+                    if (passed) passedTests++;
+                    
+                    addLog(`Test ${index + 1}: ${testCase.field}="${testCase.value}" -> ${result} ${passed ? '✅' : '❌'}`);
+                });
+                
+                addLog(`Validation tests: ${passedTests}/${testCases.length} passed`);
+                addStatus(`Validation tests: ${passedTests}/${testCases.length} passed`, passedTests === testCases.length ? 'success' : 'warning');
+                
+            } else {
+                addLog('❌ Validation functions not available');
+                addStatus('Validation module not loaded', 'error');
+            }
+        }
+
+        function testFormValidation() {
+            addLog('📝 Testing form validation...');
+            
+            if (!window.useFormValidation) {
+                addLog('❌ useFormValidation not available');
+                return;
+            }
+            
+            // Create a test form with validation
+            const testFormData = {
+                name: '',
+                email: '',
+                subject: '',
+                message: ''
+            };
+            
+            const errors = window.validateForm(testFormData);
+            addLog(`Empty form validation: ${Object.keys(errors).length} errors`);
+            
+            // Test with valid data
+            const validFormData = {
+                name: 'John Doe',
+                email: 'john@example.com',
+                subject: 'Test Subject',
+                message: 'This is a valid message with enough characters.'
+            };
+            
+            const validErrors = window.validateForm(validFormData);
+            addLog(`Valid form validation: ${Object.keys(validErrors).length} errors`);
+            
+            if (Object.keys(errors).length > 0 && Object.keys(validErrors).length === 0) {
+                addLog('✅ Form validation working correctly');
+                addStatus('Form validation working', 'success');
+            } else {
+                addLog('❌ Form validation not working correctly');
+                addStatus('Form validation failed', 'error');
+            }
+        }
+
+        function testTranslations() {
+            addLog('🌐 Testing translations...');
+            
+            if (window.en && window.es) {
+                addLog('✅ Translation files loaded');
+                
+                // Test contact translations
+                const enContact = window.en.contact;
+                const esContact = window.es.contact;
+                
+                if (enContact && esContact) {
+                    addLog('✅ Contact translations available');
+                    
+                    // Test placeholders
+                    if (enContact.placeholders && esContact.placeholders) {
+                        addLog('✅ Placeholder translations available');
+                        addLog(`EN name placeholder: ${enContact.placeholders.name}`);
+                        addLog(`ES name placeholder: ${esContact.placeholders.name}`);
+                    } else {
+                        addLog('❌ Placeholder translations missing');
+                    }
+                    
+                    // Test validation messages
+                    if (enContact.validation && esContact.validation) {
+                        addLog('✅ Validation message translations available');
+                        addLog(`EN name required: ${enContact.validation.nameRequired}`);
+                        addLog(`ES name required: ${esContact.validation.nameRequired}`);
+                    } else {
+                        addLog('❌ Validation message translations missing');
+                    }
+                    
+                    addStatus('Translations working', 'success');
+                } else {
+                    addLog('❌ Contact translations missing');
+                    addStatus('Contact translations missing', 'error');
+                }
+            } else {
+                addLog('❌ Translation files not loaded');
+                addStatus('Translation files not loaded', 'error');
+            }
+        }
+
+        // Set up form validation
+        let formData = {};
+        let formErrors = {};
+        
+        function updateFormValidation() {
+            // Validate form
+            const errors = window.validateForm ? window.validateForm(formData) : {};
+            formErrors = errors;
+            
+            // Update error displays
+            Object.keys(formData).forEach(field => {
+                const errorDiv = document.getElementById(field + 'Error');
+                if (errorDiv) {
+                    errorDiv.textContent = errors[field] || '';
+                }
+            });
+            
+            // Update button state
+            const isValid = Object.keys(errors).length === 0 && 
+                           Object.keys(formData).every(field => formData[field]?.trim() !== '');
+            
+            submitBtn.disabled = !isValid;
+            
+            // Update status
+            if (isValid) {
+                validationStatusDiv.className = 'validation-status status-valid';
+                validationStatusDiv.textContent = 'Validation Status: Valid ✅';
+            } else {
+                validationStatusDiv.className = 'validation-status status-invalid';
+                validationStatusDiv.textContent = 'Validation Status: Invalid ❌';
+            }
+            
+            addLog(`Form validation updated - Valid: ${isValid}, Errors: ${Object.keys(errors).length}`);
+        }
+
+        // Set up event listeners
+        document.querySelectorAll('#testForm input, #testForm textarea').forEach(input => {
+            input.addEventListener('input', (e) => {
+                formData[e.target.name] = e.target.value;
+                updateFormValidation();
+            });
+        });
+
+        // Form submission
+        document.getElementById('testForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            addLog('📤 Form submitted');
+            addStatus('Form submitted successfully', 'success');
+        });
+
+        // Initialize
+        setTimeout(() => {
+            addStatus('🚀 Validation module test initialized', 'success');
+            addLog('Validation module test ready');
+            testValidationModule();
+        }, 1000);
+    </script>
+</body>
+</html> 

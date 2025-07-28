@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Form - Fixed Test</title>
+    <title>Contact Form - Optional Subject Test</title>
     <link rel="stylesheet" href="../dist/output.css">
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
@@ -94,46 +94,36 @@
         }
         .button-enabled { background: #d4edda; color: #155724; }
         .button-disabled { background: #f8d7da; color: #721c24; }
-        .field-status {
-            display: inline-block;
-            margin: 2px 5px;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .field-valid { background: #d4edda; color: #155724; }
-        .field-invalid { background: #f8d7da; color: #721c24; }
-        .field-empty { background: #e2e3e5; color: #383d41; }
     </style>
 </head>
 <body>
     <div class="test-panel">
-        <h3>🔧 Fixed Contact Test</h3>
+        <h3>📝 Optional Subject Test</h3>
         <div id="status"></div>
         <div class="log" id="log"></div>
-        <button class="button btn-primary" onclick="testRequiredFields()">Test Required Fields</button>
-        <button class="button btn-success" onclick="testOptionalSubject()">Test Optional Subject</button>
+        <button class="button btn-primary" onclick="testWithoutSubject()">Test Without Subject</button>
+        <button class="button btn-success" onclick="testWithSubject()">Test With Subject</button>
         <button class="button btn-warning" onclick="testTranslations()">Test Translations</button>
         <button class="button btn-danger" onclick="clearLog()">Clear Log</button>
     </div>
 
     <div class="main-content">
-        <h1>Contact Form - Fixed Test</h1>
-        <p>This test verifies the specific fixes: translated errors, optional subject, and working button.</p>
+        <h1>Contact Form - Optional Subject Test</h1>
+        <p>This test verifies that the contact form works correctly with the subject field being optional.</p>
         
         <div class="section">
-            <h2>Specific Fixes to Test:</h2>
+            <h2>Test Instructions:</h2>
             <ol>
-                <li><strong>✅ Translated Errors:</strong> Error messages should appear in the correct language</li>
-                <li><strong>✅ Optional Subject:</strong> Subject field should not have asterisk and be optional</li>
-                <li><strong>✅ Working Button:</strong> Button should enable when required fields are filled</li>
+                <li>Fill out the form without the subject field</li>
+                <li>Verify the button enables when required fields are filled</li>
+                <li>Test with and without subject</li>
+                <li>Check that error messages are translated</li>
             </ol>
         </div>
 
         <!-- Test Form -->
         <div class="test-form">
-            <h2>Contact Form Test (Fixed)</h2>
+            <h2>Contact Form Test (Subject Optional)</h2>
             <form id="testContactForm">
                 <div class="form-group">
                     <label for="name">Name *</label>
@@ -220,29 +210,24 @@
         }
 
         function validateField(name, value) {
-            const trimmedValue = value.trim();
-            
             switch (name) {
                 case 'name':
-                    if (!trimmedValue) return 'nameRequired';
-                    if (trimmedValue.length < 2) return 'nameMinLength';
-                    if (trimmedValue.length > 100) return 'nameMaxLength';
-                    if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(trimmedValue)) return 'namePattern';
+                    if (!value.trim()) return 'nameRequired';
+                    if (value.trim().length < 2) return 'nameMinLength';
                     return '';
                 case 'email':
-                    if (!trimmedValue) return 'emailRequired';
+                    if (!value.trim()) return 'emailRequired';
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(trimmedValue)) return 'emailInvalid';
+                    if (!emailRegex.test(value)) return 'emailInvalid';
                     return '';
                 case 'subject':
                     // Subject is optional, only validate if not empty
-                    if (trimmedValue && trimmedValue.length < 5) return 'subjectMinLength';
-                    if (trimmedValue && trimmedValue.length > 200) return 'subjectMaxLength';
+                    if (value.trim() && value.trim().length < 5) return 'subjectMinLength';
                     return '';
                 case 'message':
-                    if (!trimmedValue) return 'messageRequired';
-                    if (trimmedValue.length < 10) return 'messageMinLength';
-                    if (trimmedValue.length > 1000) return 'messageMaxLength';
+                    if (!value.trim()) return 'messageRequired';
+                    if (value.trim().length < 10) return 'messageMinLength';
+                    if (value.trim().length > 1000) return 'messageMaxLength';
                     return '';
                 default:
                     return '';
@@ -263,11 +248,11 @@
                 if (error) errors[field] = error;
             });
 
-            // Check if all required fields are filled
-            const requiredFields = ['name', 'email', 'message'];
-            const hasAllRequiredFields = requiredFields.every(field => 
-                formData[field].trim() !== ''
-            );
+            // Check if all required fields are filled and no errors
+            const hasAllRequiredFields = 
+                formData.name.trim() !== '' &&
+                formData.email.trim() !== '' &&
+                formData.message.trim() !== '';
             
             const hasNoErrors = Object.keys(errors).length === 0;
             const isFormValid = hasAllRequiredFields && hasNoErrors;
@@ -287,56 +272,40 @@
             addLog(`Button state updated - Valid: ${isFormValid}, Required: ${hasAllRequiredFields}, NoErrors: ${hasNoErrors}`);
         }
 
-        function testRequiredFields() {
-            addLog('🧪 Testing with required fields only...');
+        function testWithoutSubject() {
+            addLog('🧪 Testing form without subject...');
             
+            // Fill required fields only
             document.getElementById('name').value = 'Test User';
             document.getElementById('email').value = 'test@example.com';
             document.getElementById('subject').value = '';
             document.getElementById('message').value = 'This is a test message with enough characters to be valid.';
             
+            // Trigger change events
             ['name', 'email', 'subject', 'message'].forEach(field => {
                 const event = new Event('input', { bubbles: true });
                 document.getElementById(field).dispatchEvent(event);
             });
             
-            addLog('✅ Required fields filled');
-            addStatus('Required fields test completed', 'success');
+            addLog('✅ Form filled without subject');
         }
 
-        function testOptionalSubject() {
-            addLog('🧪 Testing optional subject...');
+        function testWithSubject() {
+            addLog('🧪 Testing form with subject...');
             
-            // Test 1: Without subject
+            // Fill all fields including subject
             document.getElementById('name').value = 'Test User';
             document.getElementById('email').value = 'test@example.com';
-            document.getElementById('subject').value = '';
+            document.getElementById('subject').value = 'Test Subject';
             document.getElementById('message').value = 'This is a test message with enough characters to be valid.';
             
+            // Trigger change events
             ['name', 'email', 'subject', 'message'].forEach(field => {
                 const event = new Event('input', { bubbles: true });
                 document.getElementById(field).dispatchEvent(event);
             });
             
-            addLog('✅ Test 1: Form filled without subject');
-            
-            // Test 2: With valid subject
-            setTimeout(() => {
-                document.getElementById('subject').value = 'Valid Subject';
-                const event = new Event('input', { bubbles: true });
-                document.getElementById('subject').dispatchEvent(event);
-                addLog('✅ Test 2: Form filled with valid subject');
-            }, 1000);
-            
-            // Test 3: With invalid subject
-            setTimeout(() => {
-                document.getElementById('subject').value = 'Short';
-                const event = new Event('input', { bubbles: true });
-                document.getElementById('subject').dispatchEvent(event);
-                addLog('✅ Test 3: Form filled with invalid subject (should show error)');
-            }, 2000);
-            
-            addStatus('Optional subject test completed', 'success');
+            addLog('✅ Form filled with subject');
         }
 
         function testTranslations() {
@@ -365,18 +334,6 @@
                     addLog('❌ Subject still has asterisk in Spanish');
                 }
                 
-                // Test validation messages
-                const enValidation = window.en.contact?.validation;
-                const esValidation = window.es.contact?.validation;
-                
-                if (enValidation && esValidation) {
-                    addLog('✅ Validation messages available in both languages');
-                    addLog(`EN nameRequired: ${enValidation.nameRequired}`);
-                    addLog(`ES nameRequired: ${esValidation.nameRequired}`);
-                } else {
-                    addLog('❌ Validation messages not found');
-                }
-                
                 addStatus('Translation test completed', 'success');
             } else {
                 addLog('❌ Translation files not loaded');
@@ -398,8 +355,8 @@
 
         // Initialize
         setTimeout(() => {
-            addStatus('🚀 Fixed test initialized', 'success');
-            addLog('Fixed test ready');
+            addStatus('🚀 Optional subject test initialized', 'success');
+            addLog('Optional subject test ready');
             updateButtonState();
         }, 1000);
     </script>

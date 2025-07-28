@@ -107,7 +107,7 @@ const en = {
     title: 'Get in Touch',
     subtitle: 'Interested in collaborating or have questions?',
     contactInfo: 'Contact Information',
-    email: 'Email',
+    email: 'Email *',
     location: 'Location',
     locationValue: 'Madrid, Spain',
     availability: 'Availability',
@@ -115,26 +115,35 @@ const en = {
     followMe: 'Follow me on:',
     sendMessage: 'Send me a message',
     name: 'Name *',
-    subject: 'Subject *',
+    subject: 'Subject',
     message: 'Message *',
-    send: 'Send message',
+    send: 'Send Message',
     sending: 'Sending...',
     success: 'Message sent successfully! I\'ll get back to you soon.',
-    error: 'Error sending message. Please try again.',
+    error: 'Failed to send message. Please try again.',
+    networkError: 'Network error. Please check your connection and try again.',
+    rateLimitError: 'Too many requests. Please wait a moment and try again.',
+    serverError: 'Server error. Please try again later.',
+    placeholders: {
+      name: 'Enter your name',
+      email: 'Enter your email address',
+      subject: 'Enter the subject of your message',
+      message: 'Write your message here...'
+    },
     validation: {
       nameRequired: 'Name is required',
       nameMinLength: 'Name must be at least 2 characters',
+      nameMaxLength: 'Name cannot exceed 100 characters',
+      namePattern: 'Name can only contain letters and spaces',
       emailRequired: 'Email is required',
       emailInvalid: 'Please enter a valid email address',
       subjectRequired: 'Subject is required',
       subjectMinLength: 'Subject must be at least 5 characters',
+      subjectMaxLength: 'Subject cannot exceed 200 characters',
       messageRequired: 'Message is required',
       messageMinLength: 'Message must be at least 10 characters',
       messageMaxLength: 'Message cannot exceed 1000 characters'
-    },
-    networkError: 'Connection error. Please check your internet connection.',
-    serverError: 'Server error. Please try again later.',
-    rateLimitError: 'Too many attempts. Please wait a moment.'
+    }
   },
   footer: {
     copyright: '© {year} David Fernández-Cuenca Marcos. All rights reserved.'

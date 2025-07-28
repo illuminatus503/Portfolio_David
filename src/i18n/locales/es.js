@@ -107,7 +107,7 @@ const es = {
     title: 'Ponte en Contacto',
     subtitle: '¿Interesado en colaborar o tienes preguntas?',
     contactInfo: 'Información de Contacto',
-    email: 'Email',
+    email: 'Email *',
     location: 'Ubicación',
     locationValue: 'Madrid, España',
     availability: 'Disponibilidad',
@@ -115,26 +115,35 @@ const es = {
     followMe: 'Sígueme en:',
     sendMessage: 'Envíame un mensaje',
     name: 'Nombre *',
-    subject: 'Asunto *',
+    subject: 'Asunto',
     message: 'Mensaje *',
-    send: 'Enviar mensaje',
+    send: 'Enviar Mensaje',
     sending: 'Enviando...',
     success: '¡Mensaje enviado con éxito! Te responderé pronto.',
     error: 'Error al enviar el mensaje. Por favor, inténtalo de nuevo.',
+    networkError: 'Error de red. Por favor, verifica tu conexión e inténtalo de nuevo.',
+    rateLimitError: 'Demasiadas solicitudes. Por favor, espera un momento e inténtalo de nuevo.',
+    serverError: 'Error del servidor. Por favor, inténtalo más tarde.',
+    placeholders: {
+      name: 'Escribe tu nombre',
+      email: 'Escribe tu dirección de email',
+      subject: 'Escribe el asunto de tu mensaje',
+      message: 'Escribe tu mensaje aquí...'
+    },
     validation: {
       nameRequired: 'El nombre es obligatorio',
       nameMinLength: 'El nombre debe tener al menos 2 caracteres',
+      nameMaxLength: 'El nombre no puede exceder 100 caracteres',
+      namePattern: 'El nombre solo puede contener letras y espacios',
       emailRequired: 'El email es obligatorio',
       emailInvalid: 'Por favor, introduce un email válido',
       subjectRequired: 'El asunto es obligatorio',
       subjectMinLength: 'El asunto debe tener al menos 5 caracteres',
+      subjectMaxLength: 'El asunto no puede exceder 200 caracteres',
       messageRequired: 'El mensaje es obligatorio',
       messageMinLength: 'El mensaje debe tener al menos 10 caracteres',
       messageMaxLength: 'El mensaje no puede exceder 1000 caracteres'
-    },
-    networkError: 'Error de conexión. Por favor, verifica tu conexión a internet.',
-    serverError: 'Error del servidor. Por favor, inténtalo más tarde.',
-    rateLimitError: 'Demasiados intentos. Por favor, espera un momento.'
+    }
   },
   footer: {
     copyright: '© {year} David Fernández-Cuenca Marcos. Todos los derechos reservados.'

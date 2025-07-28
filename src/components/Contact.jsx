@@ -1,7 +1,6 @@
-// Contact Component - Optimized version
+// Contact Component - Restored with specific fixes
 function Contact() {
-  const { theme } = useAppContext(); // Only use theme from context
-  // Use global translation function directly, not the hook
+  const { theme } = useAppContext();
   const t = window.t;
 
   // Memoize translations to avoid re-renders
@@ -25,18 +24,27 @@ function Contact() {
     availability: t('contact.availability'),
     availabilityValue: t('contact.availabilityValue'),
     followMe: t('contact.followMe'),
+    placeholders: {
+      name: t('contact.placeholders.name'),
+      email: t('contact.placeholders.email'),
+      subject: t('contact.placeholders.subject'),
+      message: t('contact.placeholders.message')
+    },
     validation: {
       nameRequired: t('contact.validation.nameRequired'),
       nameMinLength: t('contact.validation.nameMinLength'),
+      nameMaxLength: t('contact.validation.nameMaxLength'),
+      namePattern: t('contact.validation.namePattern'),
       emailRequired: t('contact.validation.emailRequired'),
       emailInvalid: t('contact.validation.emailInvalid'),
       subjectRequired: t('contact.validation.subjectRequired'),
       subjectMinLength: t('contact.validation.subjectMinLength'),
+      subjectMaxLength: t('contact.validation.subjectMaxLength'),
       messageRequired: t('contact.validation.messageRequired'),
       messageMinLength: t('contact.validation.messageMinLength'),
       messageMaxLength: t('contact.validation.messageMaxLength')
     }
-  }), []); // Empty dependency array - translations won't change during component lifecycle
+  }), []);
 
   // Helper function for dynamic theme classes
   const getThemeClasses = (baseClasses, darkClasses, lightClasses) => {
@@ -44,42 +52,25 @@ function Contact() {
     return `${baseClasses} ${themeSpecific}`;
   };
 
-  const [formData, setFormData] = useState({
+  // Use the validation module
+  const {
+    formData,
+    formErrors,
+    touched,
+    isFormValid,
+    handleInputChange,
+    handleBlur,
+    resetForm,
+    setFormErrors
+  } = window.useFormValidation({
     name: '',
     email: '',
     subject: '',
     message: ''
   });
-  const [formErrors, setFormErrors] = useState({});
-  const [formStatus, setFormStatus] = useState({ type: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [touched, setTouched] = useState({});
 
-  // Validation functions
-  const validateField = (name, value) => {
-    switch (name) {
-      case 'name':
-        if (!value.trim()) return 'nameRequired';
-        if (value.trim().length < 2) return 'nameMinLength';
-        return '';
-      case 'email':
-        if (!value.trim()) return 'emailRequired';
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) return 'emailInvalid';
-        return '';
-      case 'subject':
-        if (!value.trim()) return 'subjectRequired';
-        if (value.trim().length < 5) return 'subjectMinLength';
-        return '';
-      case 'message':
-        if (!value.trim()) return 'messageRequired';
-        if (value.trim().length < 10) return 'messageMinLength';
-        if (value.trim().length > 1000) return 'messageMaxLength';
-        return '';
-      default:
-        return '';
-    }
-  };
+  const [formStatus, setFormStatus] = React.useState({ type: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Helper function to get translated error message
   const getTranslatedError = (errorKey) => {
@@ -87,54 +78,13 @@ function Contact() {
     return translations.validation[errorKey] || errorKey;
   };
 
-  const validateForm = () => {
-    const errors = {};
-    Object.keys(formData).forEach(field => {
-      const errorKey = validateField(field, formData[field]);
-      if (errorKey) errors[field] = errorKey;
-    });
-    return errors;
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-
-    // Only validate and clear error if field has been touched
-    if (touched[name]) {
-      const errorKey = validateField(name, value);
-      setFormErrors(prev => ({
-        ...prev,
-        [name]: errorKey
-      }));
-    }
-  };
-
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    setTouched(prev => ({
-      ...prev,
-      [name]: true
-    }));
-
-    const errorKey = validateField(name, value);
-    setFormErrors(prev => ({
-      ...prev,
-      [name]: errorKey
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Validate form
-    const errors = validateForm();
+    const errors = formErrors;
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      setTouched(Object.keys(formData).reduce((acc, key) => ({ ...acc, [key]: true }), {}));
       return;
     }
 
@@ -165,9 +115,7 @@ function Contact() {
       
       if (result.success) {
         setFormStatus({ type: 'success', message: translations.success });
-        setFormData({ name: '', email: '', subject: '', message: '' });
-        setFormErrors({});
-        setTouched({});
+        resetForm();
       } else {
         setFormStatus({ type: 'error', message: result.error || translations.error });
       }
@@ -193,12 +141,6 @@ function Contact() {
       }, 5000);
     }
   };
-
-  const isFormValid = Object.keys(formErrors).length === 0 && 
-                     formData.name.trim() !== '' &&
-                     formData.email.trim() !== '' &&
-                     formData.subject.trim() !== '' &&
-                     formData.message.trim() !== '';
 
   return (
     <section id="contact" className={getThemeClasses(
@@ -243,7 +185,7 @@ function Contact() {
                   </a>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
                   <span className="text-accent text-xl">📍</span>
@@ -265,7 +207,7 @@ function Contact() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-4">
                 <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
                   <span className="text-accent text-xl">💼</span>
@@ -288,7 +230,7 @@ function Contact() {
                 </div>
               </div>
             </div>
-            
+
             <div className="pt-6">
               <h4 className={getThemeClasses(
                 'font-medium mb-4',
@@ -328,7 +270,7 @@ function Contact() {
               </div>
             </div>
           </div>
-          
+
           {/* Contact Form */}
           <div className={getThemeClasses(
             'p-8 rounded-lg shadow-lg',
@@ -351,27 +293,27 @@ function Contact() {
                 )}>
                   {translations.name}
                 </label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  name="name" 
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
                   value={formData.name}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  required 
+                  required
                   className={getThemeClasses(
                     'w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition',
                     'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
                     'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
                   )}
-                  placeholder="Tu nombre"
+                  placeholder={translations.placeholders.name}
                   disabled={isSubmitting}
                 />
                 {touched.name && formErrors.name && (
                   <p className="text-red-400 text-sm mt-1">{getTranslatedError(formErrors.name)}</p>
                 )}
               </div>
-              
+
               <div>
                 <label htmlFor="email" className={getThemeClasses(
                   'block text-sm font-medium mb-2',
@@ -380,20 +322,20 @@ function Contact() {
                 )}>
                   {translations.email}
                 </label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email" 
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
                   value={formData.email}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  required 
+                  required
                   className={getThemeClasses(
                     'w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition',
                     'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
                     'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
                   )}
-                  placeholder="tu@email.com"
+                  placeholder={translations.placeholders.email}
                   disabled={isSubmitting}
                 />
                 {touched.email && formErrors.email && (
@@ -407,7 +349,7 @@ function Contact() {
                   'text-textLight-dark',
                   'text-textLight-light'
                 )}>
-                  {translations.subject}
+                  {translations.subject.replace(' *', '')}
                 </label>
                 <input 
                   type="text" 
@@ -416,13 +358,12 @@ function Contact() {
                   value={formData.subject}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  required 
                   className={getThemeClasses(
                     'w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition',
                     'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
                     'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
                   )}
-                  placeholder="Asunto del mensaje"
+                  placeholder={translations.placeholders.subject}
                   disabled={isSubmitting}
                 />
                 {touched.subject && formErrors.subject && (
@@ -451,7 +392,7 @@ function Contact() {
                     'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
                     'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
                   )}
-                  placeholder="Tu mensaje aquí..."
+                  placeholder={translations.placeholders.message}
                   disabled={isSubmitting}
                 />
                 {touched.message && formErrors.message && (

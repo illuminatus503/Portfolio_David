@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Validation Debug</title>
+    <link rel="stylesheet" href="../dist/output.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-panel { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            width: 400px; 
+            background: #fff; 
+            border: 2px solid #007bff; 
+            border-radius: 8px; 
+            padding: 15px; 
+            font-size: 12px; 
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .log { 
+            max-height: 300px; 
+            overflow-y: auto; 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 10px;
+            border-radius: 4px;
+        }
+        .main-content { margin-right: 420px; }
+        .button { 
+            padding: 8px 16px; 
+            margin: 5px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 12px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .test-area {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .success-message {
+            color: #28a745;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .status-indicator {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .status-valid { background: #d4edda; color: #155724; }
+        .status-invalid { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <h3>🔍 Contact Form Validation Debug</h3>
+        <div id="status"></div>
+        <div class="log" id="log"></div>
+        <button class="button btn-primary" onclick="testValidation()">Test Validation</button>
+        <button class="button btn-success" onclick="fillValidData()">Fill Valid Data</button>
+        <button class="button btn-warning" onclick="fillInvalidData()">Fill Invalid Data</button>
+        <button class="button btn-danger" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Contact Form Validation Debug</h1>
+        <p>This debug tool helps identify issues with form validation and button enabling.</p>
+        
+        <div class="test-area">
+            <h2>Form Validation Status</h2>
+            <div id="validation-status">
+                <div class="status-indicator status-warning">Checking validation...</div>
+            </div>
+        </div>
+
+        <div class="test-area">
+            <h2>Contact Form Test</h2>
+            <form id="debugContactForm">
+                <div class="form-group">
+                    <label for="name">Name *</label>
+                    <input type="text" id="name" name="name" required>
+                    <div class="error-message" id="nameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <input type="text" id="subject" name="subject" required>
+                    <div class="error-message" id="subjectError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" required></textarea>
+                    <div class="error-message" id="messageError"></div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="button btn-primary" disabled>
+                    Send Message
+                </button>
+            </form>
+
+            <div id="formStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+        const validationStatusDiv = document.getElementById('validation-status');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Form state
+        let formData = {
+            name: '',
+            email: '',
+            subject: '',
+            message: ''
+        };
+        let formErrors = {};
+        let touched = {};
+        
+        function addStatus(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            
+            while (statusDiv.children.length > 5) {
+                statusDiv.removeChild(statusDiv.firstChild);
+            }
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(div);
+            
+            while (logDiv.children.length > 20) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+            
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '';
+            addLog('Log cleared');
+        }
+
+        function validateField(name, value) {
+            switch (name) {
+                case 'name':
+                    if (!value.trim()) return 'Name is required';
+                    if (value.trim().length < 2) return 'Name must be at least 2 characters';
+                    return '';
+                case 'email':
+                    if (!value.trim()) return 'Email is required';
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) return 'Please enter a valid email address';
+                    return '';
+                case 'subject':
+                    if (!value.trim()) return 'Subject is required';
+                    if (value.trim().length < 5) return 'Subject must be at least 5 characters';
+                    return '';
+                case 'message':
+                    if (!value.trim()) return 'Message is required';
+                    if (value.trim().length < 10) return 'Message must be at least 10 characters';
+                    if (value.trim().length > 1000) return 'Message cannot exceed 1000 characters';
+                    return '';
+                default:
+                    return '';
+            }
+        }
+
+        function updateValidationStatus() {
+            const errors = {};
+            Object.keys(formData).forEach(field => {
+                const error = validateField(field, formData[field]);
+                if (error) errors[field] = error;
+            });
+
+            const isFormValid = Object.keys(errors).length === 0 && 
+                               formData.name.trim() !== '' &&
+                               formData.email.trim() !== '' &&
+                               formData.subject.trim() !== '' &&
+                               formData.message.trim() !== '';
+
+            // Update button state
+            submitBtn.disabled = !isFormValid;
+            
+            // Update validation status display
+            let statusHtml = '<h3>Validation Status:</h3>';
+            statusHtml += `<p><strong>Form Valid:</strong> ${isFormValid ? '✅ Yes' : '❌ No'}</p>`;
+            statusHtml += `<p><strong>Errors Count:</strong> ${Object.keys(errors).length}</p>`;
+            statusHtml += `<p><strong>Button Enabled:</strong> ${!submitBtn.disabled ? '✅ Yes' : '❌ No'}</p>`;
+            
+            // Show field status
+            Object.keys(formData).forEach(field => {
+                const value = formData[field];
+                const error = errors[field];
+                const isEmpty = !value.trim();
+                const status = error ? '❌ Invalid' : (isEmpty ? '⚠️ Empty' : '✅ Valid');
+                statusHtml += `<p><strong>${field}:</strong> ${status} (${value.length} chars)</p>`;
+            });
+
+            validationStatusDiv.innerHTML = statusHtml;
+            
+            // Update status indicator
+            const statusIndicator = validationStatusDiv.querySelector('.status-indicator');
+            if (statusIndicator) {
+                statusIndicator.className = `status-indicator ${isFormValid ? 'status-valid' : 'status-invalid'}`;
+                statusIndicator.textContent = isFormValid ? 'Form is Valid' : 'Form has Errors';
+            }
+
+            addLog(`Validation updated - Valid: ${isFormValid}, Errors: ${Object.keys(errors).length}`);
+        }
+
+        function handleInputChange(e) {
+            const { name, value } = e.target;
+            formData[name] = value;
+            
+            // Update error display
+            const errorDiv = document.getElementById(name + 'Error');
+            const error = validateField(name, value);
+            errorDiv.textContent = error;
+            
+            updateValidationStatus();
+        }
+
+        function handleBlur(e) {
+            const { name } = e.target;
+            touched[name] = true;
+            updateValidationStatus();
+        }
+
+        function testValidation() {
+            addLog('🧪 Testing validation logic...');
+            
+            // Test with empty form
+            formData = { name: '', email: '', subject: '', message: '' };
+            updateValidationStatus();
+            
+            // Test with valid data
+            setTimeout(() => {
+                formData = { 
+                    name: 'Test User', 
+                    email: 'test@example.com', 
+                    subject: 'Test Subject', 
+                    message: 'This is a test message with enough characters to be valid.' 
+                };
+                updateValidationStatus();
+                addLog('✅ Validation test completed');
+            }, 1000);
+        }
+
+        function fillValidData() {
+            addLog('📝 Filling form with valid data...');
+            
+            document.getElementById('name').value = 'Test User';
+            document.getElementById('email').value = 'test@example.com';
+            document.getElementById('subject').value = 'Test Subject';
+            document.getElementById('message').value = 'This is a test message with enough characters to be valid.';
+            
+            // Trigger change events
+            ['name', 'email', 'subject', 'message'].forEach(field => {
+                const event = new Event('input', { bubbles: true });
+                document.getElementById(field).dispatchEvent(event);
+            });
+            
+            addLog('✅ Form filled with valid data');
+        }
+
+        function fillInvalidData() {
+            addLog('📝 Filling form with invalid data...');
+            
+            document.getElementById('name').value = 'A';
+            document.getElementById('email').value = 'invalid-email';
+            document.getElementById('subject').value = 'Hi';
+            document.getElementById('message').value = 'Short';
+            
+            // Trigger change events
+            ['name', 'email', 'subject', 'message'].forEach(field => {
+                const event = new Event('input', { bubbles: true });
+                document.getElementById(field).dispatchEvent(event);
+            });
+            
+            addLog('✅ Form filled with invalid data');
+        }
+
+        // Set up event listeners
+        document.querySelectorAll('#debugContactForm input, #debugContactForm textarea').forEach(input => {
+            input.addEventListener('input', handleInputChange);
+            input.addEventListener('blur', handleBlur);
+        });
+
+        // Form submission
+        document.getElementById('debugContactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            addLog('📤 Form submitted');
+            addStatus('Form submitted successfully', 'success');
+        });
+
+        // Initialize
+        setTimeout(() => {
+            addStatus('🚀 Validation debug tool initialized', 'success');
+            addLog('Validation debug tool ready');
+            updateValidationStatus();
+        }, 1000);
+    </script>
+</body>
+</html> 
