@@ -1,23 +1,9 @@
+// Import useTranslation hook
+const { useTranslation } = await import('../i18n/useTranslation.js');
+
 // Hero Component
 function Hero() {
-  const { language } = useAppContext();
-
-  const translations = {
-    es: {
-      name: 'David Fernández-Cuenca Marcos',
-      role: 'Ingeniero de Software en Indra',
-      tagline: 'Especialista en sistemas críticos y control de tráfico aéreo',
-      cta: 'Conectemos'
-    },
-    en: {
-      name: 'David Fernández-Cuenca Marcos',
-      role: 'Software Engineer at Indra',
-      tagline: 'Critical systems and air traffic control specialist',
-      cta: "Let's Talk"
-    }
-  };
-
-  const t = translations[language];
+  const { t } = useTranslation();
 
   const scrollToContact = () => {
     const element = document.getElementById('contact');
@@ -54,13 +40,13 @@ function Hero() {
       
       {/* Content */}
       <h1 className="text-4xl md:text-6xl font-display font-semibold mb-2 relative z-10">
-        {t.name}
+        {t('hero.name')}
       </h1>
       <p className="text-xl md:text-2xl opacity-80 mb-4 relative z-10">
-        {t.role}
+        {t('hero.role')}
       </p>
       <p className="italic text-lg md:text-xl opacity-70 mb-8 cursor relative z-10">
-        {t.tagline}
+        {t('hero.tagline')}
       </p>
       
       {/* CTA Button */}
@@ -69,7 +55,7 @@ function Hero() {
         className="px-8 py-3 border-2 border-accent rounded-full hover:bg-accent hover:text-white transition focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 relative z-10"
         aria-label="Ir a la sección de contacto"
       >
-        {t.cta}
+        {t('hero.cta')}
       </button>
     </section>
   );

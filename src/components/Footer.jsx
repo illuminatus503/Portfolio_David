@@ -1,9 +1,25 @@
+// Import useTranslation hook
+const { useTranslation } = await import('../i18n/useTranslation.js');
+
 // Footer Component
 function Footer() {
+  const { theme } = useAppContext();
+  const { t } = useTranslation();
+
+  // Helper function for dynamic theme classes
+  const getThemeClasses = (baseClasses, darkClasses, lightClasses) => {
+    const themeSpecific = theme === 'dark' ? darkClasses : lightClasses;
+    return `${baseClasses} ${themeSpecific}`;
+  };
+
   return (
-    <footer className="bg-primary py-6 text-center text-textMuted">
+    <footer className={getThemeClasses(
+      'py-6 text-center',
+      'bg-primary-dark text-textMuted-dark',
+      'bg-primary-light text-textMuted-light'
+    )}>
       <div className="container mx-auto px-6">
-        <p>© {new Date().getFullYear()} David Fernández-Cuenca Marcos. All rights reserved.</p>
+        <p>{t('footer.copyright', { year: new Date().getFullYear() })}</p>
       </div>
     </footer>
   );

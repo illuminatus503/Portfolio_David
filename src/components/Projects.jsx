@@ -1,6 +1,10 @@
+// Import useTranslation hook
+const { useTranslation } = await import('../i18n/useTranslation.js');
+
 // Projects Component
 function Projects() {
-  const { language } = useAppContext();
+  const { theme } = useAppContext();
+  const { t } = useTranslation();
   const [githubData, setGithubData] = useState({
     repos: 0,
     stars: 0,
@@ -9,53 +13,38 @@ function Projects() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const translations = {
-    es: {
-      title: 'Proyectos Destacados',
-      repositories: 'Repositorios',
-      stars: 'Estrellas',
-      commits: 'Commits (30 días)',
-      viewOnGitHub: 'Ver en GitHub →',
-      loading: 'Cargando proyectos...'
-    },
-    en: {
-      title: 'Featured Projects',
-      repositories: 'Repositories',
-      stars: 'Stars',
-      commits: 'Commits (30 days)',
-      viewOnGitHub: 'View on GitHub →',
-      loading: 'Loading projects...'
-    }
+  // Helper function for dynamic theme classes
+  const getThemeClasses = (baseClasses, darkClasses, lightClasses) => {
+    const themeSpecific = theme === 'dark' ? darkClasses : lightClasses;
+    return `${baseClasses} ${themeSpecific}`;
   };
-
-  const t = translations[language];
 
   const featuredProjects = [
     {
-      title: 'LeetCode‑Exercises',
-      brief: language === 'es' ? 'Colección de soluciones a problemas de algoritmos y estructuras de datos.' : 'Algorithm and data structure problem solutions in Python.',
-      more: language === 'es' ? 'Más de 200 ejercicios resueltos con análisis de complejidad temporal y espacial, optimizaciones y explicaciones detalladas de las estrategias utilizadas.' : 'Includes 200+ solved exercises with complexity analysis and optimizations.',
+      title: t('projects.leetcode.title'),
+      brief: t('projects.leetcode.brief'),
+      more: t('projects.leetcode.more'),
       tags: ['Python', 'Algorithms', 'Data Structures'],
       url: 'https://github.com/illuminatus503/LeetCode-Exercises'
     },
     {
-      title: 'Basic‑Data‑Structures',
-      brief: language === 'es' ? 'Implementaciones educativas de estructuras de datos fundamentales.' : 'Data structure implementations in Python, C++, and Ada.',
-      more: language === 'es' ? 'Implementaciones completas en Python, C++ y Ada de listas, pilas, colas, árboles y grafos, con ejemplos prácticos y documentación detallada.' : 'Covering lists, stacks, queues, trees, and graphs with usage examples.',
+      title: t('projects.dataStructures.title'),
+      brief: t('projects.dataStructures.brief'),
+      more: t('projects.dataStructures.more'),
       tags: ['Python', 'C++', 'Ada'],
       url: 'https://github.com/illuminatus503/Basic-Data-Structures'
     },
     {
-      title: 'valet',
-      brief: language === 'es' ? 'Suite de utilidades y herramientas de automatización para desarrollo.' : '"Valet, your truthful servant"—main utilities repo.',
-      more: language === 'es' ? 'Herramientas CLI, scripts de automatización y librerías internas utilizadas en proyectos empresariales para optimizar flujos de trabajo de desarrollo.' : 'Contains automation scripts, CLI tools, and internal libraries for enterprise projects.',
+      title: t('projects.valet.title'),
+      brief: t('projects.valet.brief'),
+      more: t('projects.valet.more'),
       tags: ['CLI', 'Automation', 'Utilities'],
       url: 'https://github.com/illuminatus503/valet'
     },
     {
-      title: 'AARN23.BachChorales',
-      brief: language === 'es' ? 'Proyecto de machine learning para análisis musical.' : 'ML/NN course project on Bach chorales.',
-      more: language === 'es' ? 'Sistema de clasificación de corales de Bach utilizando redes neuronales profundas y análisis avanzado de características musicales.' : 'Classifies Bach chorales using deep neural networks and musical feature analysis.',
+      title: t('projects.bachChorales.title'),
+      brief: t('projects.bachChorales.brief'),
+      more: t('projects.bachChorales.more'),
       tags: ['Machine Learning', 'Neural Networks', 'Music Analysis'],
       url: 'https://github.com/illuminatus503/AARN23.BachChorales'
     }
@@ -111,35 +100,89 @@ function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="py-24 bg-secondary">
+    <section id="projects" className={getThemeClasses(
+      'py-24',
+      'bg-secondary-dark',
+      'bg-secondary-light'
+    )}>
       <div className="container mx-auto px-6">
-        <h2 className="text-3xl md:text-4xl font-display font-semibold mb-8">
-          {t.title}
+        <h2 className={getThemeClasses(
+          'text-3xl md:text-4xl font-display font-semibold mb-8',
+          'text-textLight-dark',
+          'text-textLight-light'
+        )}>
+          {t('projects.title')}
         </h2>
         
         {/* GitHub Stats */}
         <div className="mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-primary p-6 rounded-lg text-center">
+          <div className={getThemeClasses(
+            'p-6 rounded-lg text-center',
+            'bg-primary-dark',
+            'bg-primary-light'
+          )}>
             <div className="text-3xl font-bold text-accent mb-2">{githubData.repos}</div>
-            <p className="text-textMuted">{t.repositories}</p>
+            <p className={getThemeClasses(
+              '',
+              'text-textMuted-dark',
+              'text-textMuted-light'
+            )}>
+              {t('projects.repositories')}
+            </p>
           </div>
-          <div className="bg-primary p-6 rounded-lg text-center">
+          <div className={getThemeClasses(
+            'p-6 rounded-lg text-center',
+            'bg-primary-dark',
+            'bg-primary-light'
+          )}>
             <div className="text-3xl font-bold text-accent mb-2">{githubData.stars}</div>
-            <p className="text-textMuted">{t.stars}</p>
+            <p className={getThemeClasses(
+              '',
+              'text-textMuted-dark',
+              'text-textMuted-light'
+            )}>
+              {t('projects.stars')}
+            </p>
           </div>
-          <div className="bg-primary p-6 rounded-lg text-center">
+          <div className={getThemeClasses(
+            'p-6 rounded-lg text-center',
+            'bg-primary-dark',
+            'bg-primary-light'
+          )}>
             <div className="text-3xl font-bold text-accent mb-2">{githubData.commits}</div>
-            <p className="text-textMuted">{t.commits}</p>
+            <p className={getThemeClasses(
+              '',
+              'text-textMuted-dark',
+              'text-textMuted-light'
+            )}>
+              {t('projects.commits')}
+            </p>
           </div>
         </div>
         
         {/* Featured Projects */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {featuredProjects.map((project, index) => (
-            <div key={index} className="project-card bg-primary rounded-lg shadow overflow-hidden hover:transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
+            <div key={index} className={getThemeClasses(
+              'project-card rounded-lg shadow overflow-hidden hover:transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300',
+              'bg-primary-dark',
+              'bg-primary-light'
+            )}>
               <div className="p-6">
-                <h3 className="text-2xl font-semibold mb-2">{project.title}</h3>
-                <p className="text-textMuted mb-2">{project.brief}</p>
+                <h3 className={getThemeClasses(
+                  'text-2xl font-semibold mb-2',
+                  'text-textLight-dark',
+                  'text-textLight-light'
+                )}>
+                  {project.title}
+                </h3>
+                <p className={getThemeClasses(
+                  'mb-2',
+                  'text-textMuted-dark',
+                  'text-textMuted-light'
+                )}>
+                  {project.brief}
+                </p>
                 <div className="flex flex-wrap gap-2 mb-4">
                   {project.tags.map((tag, tagIndex) => (
                     <span key={tagIndex} className="px-2 py-1 bg-accent/20 text-accent text-xs rounded">
@@ -147,11 +190,21 @@ function Projects() {
                     </span>
                   ))}
                 </div>
-                <details className="bg-secondary p-3 rounded">
+                <details className={getThemeClasses(
+                  'p-3 rounded',
+                  'bg-secondary-dark',
+                  'bg-secondary-light'
+                )}>
                   <summary className="cursor-pointer text-accent hover:underline">
-                    {language === 'es' ? 'Detalles' : 'Details'}
+                    {t('projects.details')}
                   </summary>
-                  <p className="mt-2 text-textMuted">{project.more}</p>
+                  <p className={getThemeClasses(
+                    'mt-2',
+                    'text-textMuted-dark',
+                    'text-textMuted-light'
+                  )}>
+                    {project.more}
+                  </p>
                 </details>
                 <a 
                   href={project.url} 
@@ -159,7 +212,7 @@ function Projects() {
                   rel="noopener noreferrer"
                   className="inline-block mt-4 text-accent hover:underline"
                 >
-                  {t.viewOnGitHub}
+                  {t('projects.viewOnGitHub')}
                 </a>
               </div>
             </div>
@@ -170,21 +223,47 @@ function Projects() {
         {loading ? (
           <div className="text-center py-8">
             <div className="loading-spinner mx-auto mb-4"></div>
-            <p className="text-textMuted">{t.loading}</p>
+            <p className={getThemeClasses(
+              '',
+              'text-textMuted-dark',
+              'text-textMuted-light'
+            )}>
+              {t('projects.loading')}
+            </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project, index) => (
-              <div key={index} className="project-card bg-primary rounded-lg shadow overflow-hidden hover:transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
+              <div key={index} className={getThemeClasses(
+                'project-card rounded-lg shadow overflow-hidden hover:transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300',
+                'bg-primary-dark',
+                'bg-primary-light'
+              )}>
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-semibold">{project.name}</h3>
-                    <div className="flex items-center space-x-2 text-sm text-textMuted">
+                    <h3 className={getThemeClasses(
+                      'text-xl font-semibold',
+                      'text-textLight-dark',
+                      'text-textLight-light'
+                    )}>
+                      {project.name}
+                    </h3>
+                    <div className={getThemeClasses(
+                      'flex items-center space-x-2 text-sm',
+                      'text-textMuted-dark',
+                      'text-textMuted-light'
+                    )}>
                       <span>⭐ {project.stars}</span>
                       <span>🔀 {project.forks}</span>
                     </div>
                   </div>
-                  <p className="text-textMuted mb-4">{project.description}</p>
+                  <p className={getThemeClasses(
+                    'mb-4',
+                    'text-textMuted-dark',
+                    'text-textMuted-light'
+                  )}>
+                    {project.description}
+                  </p>
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="px-2 py-1 bg-accent/20 text-accent text-xs rounded">
                       {project.language}
@@ -201,7 +280,7 @@ function Projects() {
                     rel="noopener noreferrer"
                     className="inline-block text-accent hover:underline"
                   >
-                    {t.viewOnGitHub}
+                    {t('projects.viewOnGitHub')}
                   </a>
                 </div>
               </div>

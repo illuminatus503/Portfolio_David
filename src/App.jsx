@@ -1,6 +1,9 @@
 // Main App Component
 const { useState, useEffect, createContext, useContext } = React;
 
+// Import i18n
+// const i18n = await import('./i18n/index.js').then(m => m.default);
+
 // Context for theme and language
 const AppContext = createContext();
 
@@ -12,6 +15,9 @@ function App() {
   const [theme, setTheme] = useState('dark');
   const [language, setLanguage] = useState('en');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Initialize i18n (uncomment when ready to use)
+  // const [i18nInstance, setI18nInstance] = useState(null);
 
   // Initialize theme and language from localStorage and system preference
   useEffect(() => {

@@ -68,8 +68,9 @@ npm run preview
 ## 📁 Project Structure
 
 ```
-portfolio-react/
+Portfolio_David/
 ├── 📄 README.md                 # Main documentation
+├── 📄 env.example               # Environment variables template
 ├── 📄 index.html                # Entry point
 ├── 📄 package.json              # Dependencies and scripts
 ├── 📄 tailwind.config.js        # Tailwind configuration
@@ -80,24 +81,57 @@ portfolio-react/
 ├── 📄 .prettierrc               # Prettier configuration
 ├── 📄 .gitignore                # Git ignore rules
 ├── 📄 site.webmanifest          # PWA manifest
-├── 📄 THEME_GUIDE.md            # Theme system documentation
-├── 📄 test-favicon.html         # Favicon testing page
+│
+├── 📁 api/                      # Vercel Functions
+│   └── 📄 contact.js            # Contact form API
 │
 ├── 📁 src/                      # Source code
 │   ├── 📄 globals.css           # Global styles and Tailwind
 │   ├── 📄 App.jsx               # Main React component
 │   ├── 📄 types.d.ts            # TypeScript definitions
 │   ├── 📄 analytics.js          # Analytics utilities
-│   ├── 📄 README.md             # Source code documentation
 │   │
-│   └── 📁 components/           # React components
-│       ├── 📄 Navbar.jsx        # Navigation component
-│       ├── 📄 Hero.jsx          # Hero section
-│       ├── 📄 About.jsx         # About section
-│       ├── 📄 Skills.jsx        # Skills section
-│       ├── 📄 Projects.jsx      # Projects section
-│       ├── 📄 Contact.jsx       # Contact section
-│       └── 📄 Footer.jsx        # Footer component
+│   ├── 📁 components/           # React components
+│   │   ├── 📄 Navbar.jsx        # Navigation component
+│   │   ├── 📄 Hero.jsx          # Hero section
+│   │   ├── 📄 About.jsx         # About section
+│   │   ├── 📄 Skills.jsx        # Skills section
+│   │   ├── 📄 Projects.jsx      # Projects section
+│   │   ├── 📄 Contact.jsx       # Contact section
+│   │   └── 📄 Footer.jsx        # Footer component
+│   │
+│   ├── 📁 i18n/                 # Internationalization
+│   │   ├── 📄 index.js          # i18n configuration
+│   │   ├── 📄 i18n.js           # Core i18n system
+│   │   ├── 📄 useTranslation.js # React hook
+│   │   └── 📁 locales/          # Translation files
+│   │       ├── 📄 en.js         # English translations
+│   │       └── 📄 es.js         # Spanish translations
+│   │
+│   └── 📁 services/             # API services
+│       ├── 📄 contactService.js # Contact form service
+│       └── 📄 gmailService.js   # Gmail integration
+│
+├── 📁 assets/                   # Static assets
+│   ├── 📄 favicon.ico           # Favicon
+│   ├── 📄 favicon.svg           # SVG favicon
+│   └── 📄 README.md             # Assets documentation
+│
+├── 📁 docs/                     # Documentation
+│   ├── 📁 setup/                # Setup guides
+│   │   ├── 📄 VERCEL_GMAIL_SETUP.md
+│   │   ├── 📄 THEME_GUIDE.md
+│   │   └── 📄 I18N_MIGRATION_SUMMARY.md
+│   ├── 📁 development/          # Development docs
+│   └── 📁 summaries/            # Project summaries
+│
+└── 📁 tests/                    # Test files
+    ├── 📄 contact-form.test.js  # Contact form tests
+    └── 📄 test-favicon.html     # Favicon testing
+```
+│   │
+│   └── 📁 services/             # API services
+│       └── 📄 contactService.js # Contact form API service
 │
 ├── 📁 assets/                   # Static assets
 │   ├── 📄 README.md             # Assets documentation
@@ -179,6 +213,28 @@ npm run build
 ### Environment Variables
 No environment variables required for basic functionality.
 
+### Contact Form
+The contact form is fully functional with the following features:
+- **Client-side validation** with real-time feedback
+- **Internationalization** support (Spanish/English)
+- **Error handling** for network and server errors
+- **Rate limiting** protection
+- **Accessibility** compliant with ARIA attributes
+- **Responsive design** for all devices
+
+#### Backend Integration
+The form is prepared for backend integration:
+- **API service** in `src/services/contactService.js`
+- **Backend examples** in `BACKEND_INTEGRATION.md`
+- **Test suite** in `tests/contact-form.test.js`
+- **Environment configuration** in `env.example`
+
+To integrate with a real backend:
+1. Set up your API endpoint
+2. Update `REACT_APP_CONTACT_API` in environment variables
+3. Replace the simulation in `Contact.jsx`
+4. Test the integration
+
 ## 🎨 Customization
 
 ### Colors and Theme
@@ -209,29 +265,24 @@ Replace files in `assets/` directory:
 
 ## 📚 Documentation
 
-### Documentation Hub
-- **[DOCUMENTATION.md](./DOCUMENTATION.md)** - Complete documentation index
-- **[DEVELOPMENT.md](./DEVELOPMENT.md)** - Technical development guide
+### Setup Guides
+- **[Gmail Setup](./docs/setup/VERCEL_GMAIL_SETUP.md)** - Configure Gmail with Vercel Functions
+- **[Theme Guide](./docs/setup/THEME_GUIDE.md)** - Theme system documentation
+- **[i18n Migration](./docs/setup/I18N_MIGRATION_SUMMARY.md)** - Internationalization setup
 
-### Core Documentation
-- **[README.md](./README.md)** - Main project documentation
-- **[THEME_GUIDE.md](./THEME_GUIDE.md)** - Theme system guide
-- **[src/README.md](./src/README.md)** - Source code documentation
-- **[assets/README.md](./assets/README.md)** - Assets documentation
+### Environment Variables
+Copy `env.example` to `.env` and configure:
+- `GMAIL_USER` - Your Gmail email
+- `GMAIL_APP_PASSWORD` - Gmail App Password (16 characters)
+- `RECIPIENT_EMAIL` - Email to receive contact form messages (optional)
+- `GA_MEASUREMENT_ID` - Google Analytics ID (optional)
 
-### Key Concepts
+### Key Features
 - **Theme System**: Dark/light mode with CSS variables
 - **Component Architecture**: Modular React components
 - **Styling Strategy**: Tailwind CSS with custom components
 - **Internationalization**: Multi-language support
 - **PWA Features**: Service worker and manifest
-
-### Development Guidelines
-- **Code Style**: ESLint + Prettier configuration
-- **Type Safety**: TypeScript for better development
-- **Performance**: Optimized builds and lazy loading
-- **Accessibility**: WCAG AA compliance
-- **SEO**: Meta tags and structured data
 
 ## 🤝 Contributing
 

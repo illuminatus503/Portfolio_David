@@ -1,31 +1,16 @@
+// Import useTranslation hook
+const { useTranslation } = await import('../i18n/useTranslation.js');
+
 // Navbar Component
 function Navbar() {
   const { theme, setTheme, language, setLanguage, mobileMenuOpen, setMobileMenuOpen } = useAppContext();
+  const { t } = useTranslation();
 
   // Helper function for dynamic theme classes
   const getThemeClasses = (baseClasses, darkClasses, lightClasses) => {
     const themeSpecific = theme === 'dark' ? darkClasses : lightClasses;
     return `${baseClasses} ${themeSpecific}`;
   };
-
-  const translations = {
-    es: {
-      home: 'Inicio',
-      about: 'Sobre mí',
-      skills: 'Habilidades',
-      projects: 'Proyectos',
-      contact: 'Contacto'
-    },
-    en: {
-      home: 'Home',
-      about: 'About',
-      skills: 'Skills',
-      projects: 'Projects',
-      contact: 'Contact'
-    }
-  };
-
-  const t = translations[language];
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -64,16 +49,16 @@ function Navbar() {
               'text-textLight-light'
             )}
           >
-            {t.home}
+            {t('nav.home')}
           </button>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-6">
             {[
-              { id: 'about', label: t.about },
-              { id: 'skills', label: t.skills },
-              { id: 'projects', label: t.projects },
-              { id: 'contact', label: t.contact }
+              { id: 'about', label: t('nav.about') },
+              { id: 'skills', label: t('nav.skills') },
+              { id: 'projects', label: t('nav.projects') },
+              { id: 'contact', label: t('nav.contact') }
             ].map((item) => (
               <button 
                 key={item.id}
@@ -147,10 +132,10 @@ function Navbar() {
           )}>
             <div className="flex flex-col space-y-2 pt-4">
               {[
-                { id: 'about', label: t.about },
-                { id: 'skills', label: t.skills },
-                { id: 'projects', label: t.projects },
-                { id: 'contact', label: t.contact }
+                { id: 'about', label: t('nav.about') },
+                { id: 'skills', label: t('nav.skills') },
+                { id: 'projects', label: t('nav.projects') },
+                { id: 'contact', label: t('nav.contact') }
               ].map((item) => (
                 <button 
                   key={item.id}
