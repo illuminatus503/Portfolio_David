@@ -1,9 +1,6 @@
 // Main App Component
 const { useState, useEffect, createContext, useContext } = React;
 
-// Import i18n
-// const i18n = await import('./i18n/index.js').then(m => m.default);
-
 // Context for theme and language
 const AppContext = createContext();
 
@@ -15,9 +12,6 @@ function App() {
   const [theme, setTheme] = useState('dark');
   const [language, setLanguage] = useState('en');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  // Initialize i18n (uncomment when ready to use)
-  // const [i18nInstance, setI18nInstance] = useState(null);
 
   // Initialize theme and language from localStorage and system preference
   useEffect(() => {
@@ -32,7 +26,22 @@ function App() {
       setTheme(savedTheme);
     }
     
-    if (savedLanguage) setLanguage(savedLanguage);
+    // Detect browser language if no saved language
+    if (!savedLanguage) {
+      const browserLang = navigator.language || navigator.userLanguage;
+      const detectedLang = browserLang.startsWith('es') ? 'es' : 'en';
+      setLanguage(detectedLang);
+      // Use the global setLanguage function
+      if (window.setLanguage) {
+        window.setLanguage(detectedLang);
+      }
+    } else {
+      setLanguage(savedLanguage);
+      // Use the global setLanguage function
+      if (window.setLanguage) {
+        window.setLanguage(savedLanguage);
+      }
+    }
   }, []);
 
   // Apply theme to html element (for Tailwind dark mode)
@@ -55,9 +64,11 @@ function App() {
     }
   }, [theme]);
 
-  // Apply language
+  // Apply language - use global setLanguage function
   useEffect(() => {
-    localStorage.setItem('lang', language);
+    if (window.setLanguage) {
+      window.setLanguage(language);
+    }
   }, [language]);
 
   const contextValue = {
@@ -88,5 +99,11 @@ function App() {
   );
 }
 
-// Render the app
-ReactDOM.render(<App />, document.getElementById('root')); 
+// Make everything available globally
+window.AppContext = AppContext;
+window.useAppContext = useAppContext;
+window.App = App;
+
+// Use createRoot instead of ReactDOM.render
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />); 

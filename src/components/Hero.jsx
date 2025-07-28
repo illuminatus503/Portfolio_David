@@ -1,6 +1,3 @@
-// Import useTranslation hook
-const { useTranslation } = await import('../i18n/useTranslation.js');
-
 // Hero Component
 function Hero() {
   const { t } = useTranslation();
@@ -59,4 +56,7 @@ function Hero() {
       </button>
     </section>
   );
-} 
+}
+
+// Make Hero available globally
+window.Hero = Hero; 

@@ -1,6 +1,5 @@
 // English translations
-export default {
-  // Navigation
+const en = {
   nav: {
     home: 'Home',
     about: 'About',
@@ -8,16 +7,12 @@ export default {
     projects: 'Projects',
     contact: 'Contact'
   },
-
-  // Hero section
   hero: {
     name: 'David Fernández-Cuenca Marcos',
     role: 'Software Engineer at Indra',
     tagline: 'Critical systems and air traffic control specialist',
     cta: "Let's Talk"
   },
-
-  // About section
   about: {
     title: 'About Me',
     brief: 'Software engineer with over 10 years of experience in backend development, AI, and critical systems.',
@@ -25,73 +20,80 @@ export default {
     readMore: 'Read more',
     readLess: 'Read less'
   },
-
-  // Skills section
   skills: {
-    title: 'Skills',
+    title: 'Skills & Technologies',
+    subtitle: 'A comprehensive overview of my technical expertise across different domains',
+    categories: {
+      frontend: 'Frontend',
+      backend: 'Backend',
+      tools: 'Tools',
+      other: 'Other'
+    },
+    summary: {
+      title: 'Technical Expertise',
+      description: 'Over 10 years of experience across multiple technologies and domains'
+    },
     nodejs: {
       name: 'Node.js',
-      description: 'Backend & REST APIs',
-      details: 'Express, Fastify'
+      description: 'Backend development',
+      details: 'Express, REST APIs, microservices'
     },
     python: {
       name: 'Python',
-      description: 'Automation & ML',
-      details: 'Django, Flask, TensorFlow'
+      description: 'Data processing',
+      details: 'Django, Flask, data analysis'
     },
     ada: {
-      name: 'Ada & C',
+      name: 'Ada',
       description: 'Critical systems',
-      details: 'Embedded, Real-time'
+      details: 'Real-time systems, safety-critical software'
     },
     tailwind: {
       name: 'Tailwind CSS',
-      description: 'Rapid design',
-      details: 'Responsive, Utility-first'
+      description: 'Modern styling',
+      details: 'Utility-first CSS framework'
     },
     react: {
       name: 'React',
-      description: 'Dynamic interfaces',
-      details: 'Hooks, Context, Redux'
+      description: 'Frontend development',
+      details: 'Component-based UI development'
     },
     git: {
-      name: 'Git & CI/CD',
+      name: 'Git',
       description: 'Version control',
-      details: 'GitHub Actions, Jenkins'
+      details: 'GitHub, GitLab, collaborative development'
     },
     databases: {
       name: 'Databases',
-      description: 'SQL & NoSQL',
+      description: 'Data management',
       details: 'PostgreSQL, MongoDB, Redis'
     },
     cloud: {
-      name: 'Cloud & DevOps',
-      description: 'Infrastructure',
-      details: 'AWS, Docker, Kubernetes'
+      name: 'Cloud',
+      description: 'Cloud platforms',
+      details: 'AWS, Azure, Docker, Kubernetes'
     },
     ml: {
       name: 'Machine Learning',
-      description: 'AI & Analytics',
-      details: 'Neural Networks, NLP'
+      description: 'AI development',
+      details: 'TensorFlow, scikit-learn, NLP'
     },
     security: {
       name: 'Security',
-      description: 'Cybersecurity',
-      details: 'OAuth, JWT, HTTPS'
+      description: 'Application security',
+      details: 'OWASP, secure coding practices'
     },
     testing: {
       name: 'Testing',
-      description: 'Code quality',
-      details: 'Jest, PyTest, TDD'
+      description: 'Quality assurance',
+      details: 'Unit testing, integration testing'
     },
     mobile: {
       name: 'Mobile',
       description: 'Mobile development',
-      details: 'React Native, Flutter'
+      details: 'React Native, mobile apps'
     }
   },
-
-  // Projects section
   projects: {
     title: 'Featured Projects',
     repositories: 'Repositories',
@@ -99,30 +101,8 @@ export default {
     commits: 'Commits (30 days)',
     viewOnGitHub: 'View on GitHub →',
     loading: 'Loading projects...',
-    details: 'Details',
-    leetcode: {
-      title: 'LeetCode‑Exercises',
-      brief: 'Algorithm and data structure problem solutions in Python.',
-      more: 'Includes 200+ solved exercises with complexity analysis and optimizations.'
-    },
-    dataStructures: {
-      title: 'Basic‑Data‑Structures',
-      brief: 'Data structure implementations in Python, C++, and Ada.',
-      more: 'Covering lists, stacks, queues, trees, and graphs with usage examples.'
-    },
-    valet: {
-      title: 'valet',
-      brief: '"Valet, your truthful servant"—main utilities repo.',
-      more: 'Contains automation scripts, CLI tools, and internal libraries for enterprise projects.'
-    },
-    bachChorales: {
-      title: 'AARN23.BachChorales',
-      brief: 'ML/NN course project on Bach chorales.',
-      more: 'Classifies Bach chorales using deep neural networks and musical feature analysis.'
-    }
+    details: 'Details'
   },
-
-  // Contact section
   contact: {
     title: 'Get in Touch',
     subtitle: 'Interested in collaborating or have questions?',
@@ -156,9 +136,10 @@ export default {
     serverError: 'Server error. Please try again later.',
     rateLimitError: 'Too many attempts. Please wait a moment.'
   },
-
-  // Footer
   footer: {
     copyright: '© {year} David Fernández-Cuenca Marcos. All rights reserved.'
   }
-}; 
+};
+
+// Make available globally
+window.en = en; 

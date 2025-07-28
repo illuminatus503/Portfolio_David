@@ -64,7 +64,14 @@
   <body class="bg-primary text-textLight antialiased scroll-smooth">
     <div id="root"></div>
     
-    <!-- Component Scripts -->
+    <!-- Locales (must be first) -->
+    <script type="text/babel" src="./src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="./src/i18n/locales/es.js"></script>
+    
+    <!-- I18n System -->
+    <script type="text/babel" src="./src/i18n/useTranslation.js"></script>
+    
+    <!-- Component Scripts (must be before App) -->
     <script type="text/babel" src="./src/components/Navbar.jsx"></script>
     <script type="text/babel" src="./src/components/Hero.jsx"></script>
     <script type="text/babel" src="./src/components/About.jsx"></script>
@@ -73,7 +80,7 @@
     <script type="text/babel" src="./src/components/Contact.jsx"></script>
     <script type="text/babel" src="./src/components/Footer.jsx"></script>
     
-    <!-- Main App Script -->
+    <!-- Main App Script (must be last) -->
     <script type="text/babel" src="./src/App.jsx"></script>
   </body>
 </html> 

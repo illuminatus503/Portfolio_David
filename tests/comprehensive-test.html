@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive Test - Skills & Contact</title>
+    <link rel="stylesheet" href="../dist/output.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-panel { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            width: 350px; 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            padding: 15px; 
+            font-size: 12px; 
+            z-index: 1000;
+        }
+        .status { margin: 5px 0; padding: 5px; border-radius: 3px; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .log { 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 10px;
+        }
+        .main-content { margin-right: 370px; }
+        .button { 
+            padding: 8px 16px; 
+            margin: 5px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 12px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 2px solid #007bff; 
+            border-radius: 8px; 
+            background: #f8f9fa;
+        }
+        .component-area {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-panel">
+        <h3>🧪 Comprehensive Test</h3>
+        <div id="status"></div>
+        <div class="log" id="log"></div>
+        <button class="button btn-primary" onclick="testSkills()">Test Skills</button>
+        <button class="button btn-success" onclick="testContact()">Test Contact</button>
+        <button class="button btn-warning" onclick="testAPI()">Test API</button>
+        <button class="button btn-danger" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Comprehensive Test - Skills & Contact Form</h1>
+        <p>This test verifies both the Skills component and Contact form functionality.</p>
+        
+        <div class="section">
+            <h2>Test Instructions:</h2>
+            <ol>
+                <li>Check Skills component rendering and functionality</li>
+                <li>Test Contact form validation and submission</li>
+                <li>Verify API endpoint availability</li>
+                <li>Check translations and theme switching</li>
+            </ol>
+        </div>
+
+        <!-- Skills Component Test -->
+        <div class="component-area">
+            <h2>Skills Component Test</h2>
+            <div id="skills-test-area">
+                <p>Loading Skills component...</p>
+            </div>
+        </div>
+
+        <!-- Contact Form Test -->
+        <div class="component-area">
+            <h2>Contact Form Test</h2>
+            <div id="contact-test-area">
+                <p>Loading Contact form...</p>
+            </div>
+        </div>
+
+        <!-- API Status -->
+        <div class="section">
+            <h2>API Status</h2>
+            <div id="apiStatus">Checking API status...</div>
+        </div>
+    </div>
+
+    <!-- React -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Load locales first -->
+    <script type="text/babel" src="../src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="../src/i18n/locales/es.js"></script>
+    
+    <!-- Load i18n system -->
+    <script type="text/babel" src="../src/i18n/useTranslation.js"></script>
+
+    <script type="text/babel">
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+        const apiStatusDiv = document.getElementById('apiStatus');
+        
+        function addStatus(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            
+            while (statusDiv.children.length > 5) {
+                statusDiv.removeChild(statusDiv.firstChild);
+            }
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(div);
+            
+            while (logDiv.children.length > 15) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+            
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '';
+            addLog('Log cleared');
+        }
+
+        async function testSkills() {
+            addLog('🎯 Testing Skills component...');
+            
+            // Check if Skills component is available
+            if (!window.Skills) {
+                addLog('❌ Skills component not found');
+                addStatus('Skills component not available', 'error');
+                return;
+            }
+
+            addLog('✅ Skills component found');
+            
+            // Check if React and ReactDOM are available
+            if (!window.React || !window.ReactDOM) {
+                addLog('❌ React or ReactDOM not available');
+                addStatus('React dependencies not available', 'error');
+                return;
+            }
+
+            addLog('✅ React dependencies available');
+            
+            // Try to render Skills component
+            try {
+                const container = document.getElementById('skills-test-area');
+                
+                // Create mock context
+                const mockContext = {
+                    theme: 'light',
+                    language: 'en'
+                };
+                
+                // Mock useAppContext
+                window.useAppContext = () => mockContext;
+                
+                // Render the component
+                const root = window.ReactDOM.createRoot(container);
+                root.render(window.React.createElement(window.Skills));
+                
+                addLog('✅ Skills component rendered');
+                addStatus('Skills component rendered successfully', 'success');
+                
+                // Check for skills content
+                setTimeout(() => {
+                    const skillsContent = container.innerHTML;
+                    if (skillsContent.includes('Skills') || skillsContent.includes('Habilidades')) {
+                        addLog('✅ Skills content detected');
+                    } else {
+                        addLog('⚠️ Skills content not detected');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                addLog(`❌ Skills render error: ${error.message}`);
+                addStatus('Skills render failed', 'error');
+            }
+        }
+
+        async function testContact() {
+            addLog('📧 Testing Contact form...');
+            
+            // Check if Contact component is available
+            if (!window.Contact) {
+                addLog('❌ Contact component not found');
+                addStatus('Contact component not available', 'error');
+                return;
+            }
+
+            addLog('✅ Contact component found');
+            
+            // Try to render Contact component
+            try {
+                const container = document.getElementById('contact-test-area');
+                
+                // Create mock context
+                const mockContext = {
+                    theme: 'light',
+                    language: 'en'
+                };
+                
+                // Mock useAppContext
+                window.useAppContext = () => mockContext;
+                
+                // Render the component
+                const root = window.ReactDOM.createRoot(container);
+                root.render(window.React.createElement(window.Contact));
+                
+                addLog('✅ Contact component rendered');
+                addStatus('Contact component rendered successfully', 'success');
+                
+                // Check for form content
+                setTimeout(() => {
+                    const contactContent = container.innerHTML;
+                    if (contactContent.includes('form') || contactContent.includes('input')) {
+                        addLog('✅ Contact form detected');
+                    } else {
+                        addLog('⚠️ Contact form not detected');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                addLog(`❌ Contact render error: ${error.message}`);
+                addStatus('Contact render failed', 'error');
+            }
+        }
+
+        async function testAPI() {
+            addLog('🔍 Testing API endpoint...');
+            
+            try {
+                const response = await fetch('/api/contact', {
+                    method: 'GET'
+                });
+                
+                if (response.status === 405) {
+                    addLog('✅ API endpoint exists (Method Not Allowed for GET)');
+                    apiStatusDiv.innerHTML = '<div style="color: green;">✅ API endpoint is available</div>';
+                    addStatus('API endpoint available', 'success');
+                } else {
+                    addLog(`⚠️ API endpoint responded with status: ${response.status}`);
+                    apiStatusDiv.innerHTML = `<div style="color: orange;">⚠️ Unexpected response: ${response.status}</div>`;
+                    addStatus('API endpoint responded unexpectedly', 'warning');
+                }
+            } catch (error) {
+                addLog(`❌ API error: ${error.message}`);
+                apiStatusDiv.innerHTML = '<div style="color: red;">❌ API endpoint not available</div>';
+                addStatus('API endpoint not available', 'error');
+            }
+        }
+
+        // Check translations
+        function checkTranslations() {
+            addLog('🌐 Checking translations...');
+            
+            if (window.en && window.es) {
+                addLog('✅ Both language files loaded');
+                
+                // Check skills translations
+                if (window.en.skills && window.es.skills) {
+                    addLog('✅ Skills translations available');
+                } else {
+                    addLog('❌ Skills translations missing');
+                }
+                
+                // Check contact translations
+                if (window.en.contact && window.es.contact) {
+                    addLog('✅ Contact translations available');
+                } else {
+                    addLog('❌ Contact translations missing');
+                }
+            } else {
+                addLog('❌ Translation files not loaded');
+                addStatus('Translation files not available', 'error');
+            }
+        }
+
+        // Check CSS
+        function checkCSS() {
+            addLog('🎨 Checking CSS...');
+            
+            // Check if Tailwind CSS is loaded
+            const testElement = document.createElement('div');
+            testElement.className = 'bg-blue-500 text-white p-4 rounded';
+            testElement.textContent = 'Tailwind Test';
+            document.body.appendChild(testElement);
+            
+            setTimeout(() => {
+                const computedStyle = window.getComputedStyle(testElement);
+                if (computedStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' && 
+                    computedStyle.backgroundColor !== 'transparent') {
+                    addLog('✅ Tailwind CSS is working');
+                } else {
+                    addLog('❌ Tailwind CSS not working');
+                    addStatus('Tailwind CSS not working', 'error');
+                }
+                document.body.removeChild(testElement);
+            }, 100);
+        }
+
+        // Initialize
+        setTimeout(() => {
+            addStatus('🚀 Comprehensive test initialized', 'success');
+            addLog('Comprehensive test ready');
+            
+            checkTranslations();
+            checkCSS();
+            testAPI();
+            
+            // Test components after a delay
+            setTimeout(() => {
+                testSkills();
+                testContact();
+            }, 2000);
+        }, 1000);
+    </script>
+</body>
+</html> 

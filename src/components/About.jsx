@@ -1,6 +1,3 @@
-// Import useTranslation hook
-const { useTranslation } = await import('../i18n/useTranslation.js');
-
 // About Component
 function About() {
   const { theme } = useAppContext();
@@ -61,4 +58,7 @@ function About() {
       </div>
     </section>
   );
-} 
+}
+
+// Make About available globally
+window.About = About; 

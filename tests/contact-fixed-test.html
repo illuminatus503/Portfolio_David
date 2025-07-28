@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form Fixed Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-panel { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            width: 400px; 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            padding: 15px; 
+            font-size: 12px; 
+            z-index: 1000;
+        }
+        .status { margin: 5px 0; padding: 5px; border-radius: 3px; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .log { 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 10px;
+        }
+        .main-content { margin-right: 420px; }
+        .button { 
+            padding: 8px 16px; 
+            margin: 5px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 12px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+    </style>
+</head>
+<body>
+    <div class="test-panel">
+        <h3>✅ Contact Form Fixed Test</h3>
+        <div id="status"></div>
+        <div class="log" id="log"></div>
+        <button class="button btn-primary" onclick="testFormInput()">Test Form Input</button>
+        <button class="button btn-success" onclick="testLanguageChange()">Test Language Change</button>
+        <button class="button btn-warning" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Contact Form Fixed Test</h1>
+        <p>This test verifies that the contact form no longer changes the language when typing.</p>
+        
+        <div style="margin: 20px 0; padding: 20px; border: 2px solid #28a745; border-radius: 8px; background: #f8f9fa;">
+            <h2>Instructions:</h2>
+            <ol>
+                <li>Type in the contact form fields below</li>
+                <li>Watch the language panel on the right</li>
+                <li>The language should NOT change when typing</li>
+                <li>Only manual language changes should work</li>
+            </ol>
+        </div>
+
+        <!-- This will load the actual contact form from the main app -->
+        <div id="contact-section" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <h2>Contact Form (from main app)</h2>
+            <p>Loading contact form...</p>
+        </div>
+    </div>
+
+    <!-- React -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Load locales first -->
+    <script type="text/babel" src="./src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="./src/i18n/locales/es.js"></script>
+    
+    <!-- Load i18n system -->
+    <script type="text/babel" src="./src/i18n/useTranslation.js"></script>
+
+    <script type="text/babel">
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+        
+        let lastLanguage = null;
+        let languageChanges = 0;
+        let formInputs = 0;
+        let testStartTime = null;
+        
+        function addStatus(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            
+            // Keep only last 5 status messages
+            while (statusDiv.children.length > 5) {
+                statusDiv.removeChild(statusDiv.firstChild);
+            }
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(div);
+            
+            // Keep only last 20 log messages
+            while (logDiv.children.length > 20) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+            
+            // Auto-scroll to bottom
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '';
+            addLog('Log cleared');
+        }
+
+        function checkLanguageState() {
+            const currentLang = window.getLanguage ? window.getLanguage() : (window.currentLanguage || 'unknown');
+            const localStorageLang = localStorage.getItem('lang') || 'unknown';
+            
+            // Check for language changes
+            if (lastLanguage && lastLanguage !== currentLang) {
+                languageChanges++;
+                const timeSinceStart = testStartTime ? Math.round((Date.now() - testStartTime) / 1000) : 0;
+                addLog(`⚠️ Language changed from ${lastLanguage} to ${currentLang} (change #${languageChanges}) at ${timeSinceStart}s`);
+                addStatus(`Language changed: ${lastLanguage} → ${currentLang}`, 'warning');
+            }
+            
+            lastLanguage = currentLang;
+            
+            // Check for inconsistencies
+            if (currentLang !== localStorageLang) {
+                addStatus(`❌ Mismatch: current=${currentLang}, localStorage=${localStorageLang}`, 'error');
+            } else {
+                addStatus(`✅ Language sync: ${currentLang}`, 'success');
+            }
+            
+            return { currentLang, localStorageLang, languageChanges };
+        }
+
+        function testFormInput() {
+            addLog('🧪 Testing form input...');
+            formInputs++;
+            testStartTime = Date.now();
+            
+            // Find contact form fields
+            const nameField = document.querySelector('input[name="name"]');
+            const emailField = document.querySelector('input[name="email"]');
+            const subjectField = document.querySelector('input[name="subject"]');
+            const messageField = document.querySelector('textarea[name="message"]');
+            
+            if (nameField && emailField && subjectField && messageField) {
+                addLog('Found contact form fields, simulating input...');
+                
+                // Simulate typing
+                nameField.value = 'Test User ' + formInputs;
+                nameField.dispatchEvent(new Event('input'));
+                
+                setTimeout(() => {
+                    emailField.value = 'test' + formInputs + '@example.com';
+                    emailField.dispatchEvent(new Event('input'));
+                }, 500);
+                
+                setTimeout(() => {
+                    subjectField.value = 'Test Subject ' + formInputs;
+                    subjectField.dispatchEvent(new Event('input'));
+                }, 1000);
+                
+                setTimeout(() => {
+                    messageField.value = 'This is test message ' + formInputs;
+                    messageField.dispatchEvent(new Event('input'));
+                }, 1500);
+                
+                addStatus(`✅ Form input test #${formInputs} completed`, 'success');
+            } else {
+                addStatus('❌ Contact form fields not found', 'error');
+                addLog('Contact form fields not found in DOM');
+            }
+        }
+
+        function testLanguageChange() {
+            addLog('🔄 Testing manual language change...');
+            
+            const currentLang = window.getLanguage ? window.getLanguage() : (window.currentLanguage || 'en');
+            const newLang = currentLang === 'es' ? 'en' : 'es';
+            
+            if (window.setLanguage) {
+                window.setLanguage(newLang);
+                addStatus(`✅ Language manually changed to ${newLang}`, 'success');
+            } else {
+                addStatus('❌ setLanguage function not available', 'error');
+            }
+        }
+
+        // Monitor language state every 100ms
+        setInterval(() => {
+            checkLanguageState();
+        }, 100);
+
+        // Monitor form input events
+        document.addEventListener('input', (e) => {
+            if (e.target.name && ['name', 'email', 'subject', 'message'].includes(e.target.name)) {
+                addLog(`📝 Form input: ${e.target.name} = "${e.target.value}"`);
+            }
+        });
+
+        // Monitor form focus events
+        document.addEventListener('focus', (e) => {
+            if (e.target.name && ['name', 'email', 'subject', 'message'].includes(e.target.name)) {
+                addLog(`🎯 Form focus: ${e.target.name}`);
+            }
+        });
+
+        // Monitor form blur events
+        document.addEventListener('blur', (e) => {
+            if (e.target.name && ['name', 'email', 'subject', 'message'].includes(e.target.name)) {
+                addLog(`👁️ Form blur: ${e.target.name}`);
+            }
+        });
+
+        // Initial status
+        setTimeout(() => {
+            addStatus('🚀 Contact form fixed test initialized', 'success');
+            addLog('Language monitoring started');
+            addLog('Ready to test form input without language changes');
+        }, 1000);
+    </script>
+</body>
+</html> 

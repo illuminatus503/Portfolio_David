@@ -1,16 +1,49 @@
-// Import useTranslation hook
-const { useTranslation } = await import('../i18n/useTranslation.js');
-
-// Contact Component
+// Contact Component - Optimized version
 function Contact() {
-  const { theme } = useAppContext();
-  const { t } = useTranslation();
+  const { theme } = useAppContext(); // Only use theme from context
+  // Use global translation function directly, not the hook
+  const t = window.t;
+
+  // Memoize translations to avoid re-renders
+  const translations = React.useMemo(() => ({
+    title: t('contact.title'),
+    contactInfo: t('contact.contactInfo'),
+    sendMessage: t('contact.sendMessage'),
+    name: t('contact.name'),
+    email: t('contact.email'),
+    subject: t('contact.subject'),
+    message: t('contact.message'),
+    send: t('contact.send'),
+    sending: t('contact.sending'),
+    success: t('contact.success'),
+    error: t('contact.error'),
+    networkError: t('contact.networkError'),
+    rateLimitError: t('contact.rateLimitError'),
+    serverError: t('contact.serverError'),
+    location: t('contact.location'),
+    locationValue: t('contact.locationValue'),
+    availability: t('contact.availability'),
+    availabilityValue: t('contact.availabilityValue'),
+    followMe: t('contact.followMe'),
+    validation: {
+      nameRequired: t('contact.validation.nameRequired'),
+      nameMinLength: t('contact.validation.nameMinLength'),
+      emailRequired: t('contact.validation.emailRequired'),
+      emailInvalid: t('contact.validation.emailInvalid'),
+      subjectRequired: t('contact.validation.subjectRequired'),
+      subjectMinLength: t('contact.validation.subjectMinLength'),
+      messageRequired: t('contact.validation.messageRequired'),
+      messageMinLength: t('contact.validation.messageMinLength'),
+      messageMaxLength: t('contact.validation.messageMaxLength')
+    }
+  }), []); // Empty dependency array - translations won't change during component lifecycle
 
   // Helper function for dynamic theme classes
   const getThemeClasses = (baseClasses, darkClasses, lightClasses) => {
     const themeSpecific = theme === 'dark' ? darkClasses : lightClasses;
     return `${baseClasses} ${themeSpecific}`;
   };
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,33 +59,39 @@ function Contact() {
   const validateField = (name, value) => {
     switch (name) {
       case 'name':
-        if (!value.trim()) return t('contact.validation.nameRequired');
-        if (value.trim().length < 2) return t('contact.validation.nameMinLength');
+        if (!value.trim()) return 'nameRequired';
+        if (value.trim().length < 2) return 'nameMinLength';
         return '';
       case 'email':
-        if (!value.trim()) return t('contact.validation.emailRequired');
+        if (!value.trim()) return 'emailRequired';
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) return t('contact.validation.emailInvalid');
+        if (!emailRegex.test(value)) return 'emailInvalid';
         return '';
       case 'subject':
-        if (!value.trim()) return t('contact.validation.subjectRequired');
-        if (value.trim().length < 5) return t('contact.validation.subjectMinLength');
+        if (!value.trim()) return 'subjectRequired';
+        if (value.trim().length < 5) return 'subjectMinLength';
         return '';
       case 'message':
-        if (!value.trim()) return t('contact.validation.messageRequired');
-        if (value.trim().length < 10) return t('contact.validation.messageMinLength');
-        if (value.trim().length > 1000) return t('contact.validation.messageMaxLength');
+        if (!value.trim()) return 'messageRequired';
+        if (value.trim().length < 10) return 'messageMinLength';
+        if (value.trim().length > 1000) return 'messageMaxLength';
         return '';
       default:
         return '';
     }
   };
 
+  // Helper function to get translated error message
+  const getTranslatedError = (errorKey) => {
+    if (!errorKey) return '';
+    return translations.validation[errorKey] || errorKey;
+  };
+
   const validateForm = () => {
     const errors = {};
     Object.keys(formData).forEach(field => {
-      const error = validateField(field, formData[field]);
-      if (error) errors[field] = error;
+      const errorKey = validateField(field, formData[field]);
+      if (errorKey) errors[field] = errorKey;
     });
     return errors;
   };
@@ -64,11 +103,12 @@ function Contact() {
       [name]: value
     }));
 
-    // Clear error when user starts typing
-    if (formErrors[name]) {
+    // Only validate and clear error if field has been touched
+    if (touched[name]) {
+      const errorKey = validateField(name, value);
       setFormErrors(prev => ({
         ...prev,
-        [name]: ''
+        [name]: errorKey
       }));
     }
   };
@@ -80,10 +120,10 @@ function Contact() {
       [name]: true
     }));
 
-    const error = validateField(name, value);
+    const errorKey = validateField(name, value);
     setFormErrors(prev => ({
       ...prev,
-      [name]: error
+      [name]: errorKey
     }));
   };
 
@@ -109,30 +149,38 @@ function Contact() {
         subject: formData.subject.trim(),
         message: formData.message.trim(),
         timestamp: new Date().toISOString(),
-        language: language
+        language: window.currentLanguage || 'en'
       };
 
-      // Simulate API call (replace with actual endpoint)
-      const response = await submitFormData(submitData);
+      // Submit to Vercel API
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submitData)
+      });
+
+      const result = await response.json();
       
-      if (response.success) {
-        setFormStatus({ type: 'success', message: t('contact.success') });
+      if (result.success) {
+        setFormStatus({ type: 'success', message: translations.success });
         setFormData({ name: '', email: '', subject: '', message: '' });
         setFormErrors({});
         setTouched({});
       } else {
-        setFormStatus({ type: 'error', message: response.error || t('contact.error') });
+        setFormStatus({ type: 'error', message: result.error || translations.error });
       }
     } catch (error) {
       console.error('Form submission error:', error);
-      let errorMessage = t('contact.error');
+      let errorMessage = translations.error;
       
       if (error.name === 'NetworkError' || !navigator.onLine) {
-        errorMessage = t('contact.networkError');
+        errorMessage = translations.networkError;
       } else if (error.status === 429) {
-        errorMessage = t('contact.rateLimitError');
+        errorMessage = translations.rateLimitError;
       } else if (error.status >= 500) {
-        errorMessage = t('contact.serverError');
+        errorMessage = translations.serverError;
       }
       
       setFormStatus({ type: 'error', message: errorMessage });
@@ -146,30 +194,11 @@ function Contact() {
     }
   };
 
-  // Submit form data using Gmail service
-  const submitFormData = async (data) => {
-    try {
-      // Import and use Gmail service
-      const gmailService = await import('../services/gmailService.js').then(m => m.default);
-      return await gmailService.submitContactForm(data);
-    } catch (error) {
-      console.error('Form submission error:', error);
-      
-      // Handle specific error types
-      if (error.message.includes('timeout')) {
-        throw new Error('Request timeout - please try again');
-      } else if (error.message.includes('rate limit')) {
-        throw new Error('Too many attempts - please wait a moment');
-      } else if (error.message.includes('validation')) {
-        throw new Error('Please check your form data');
-      } else {
-        throw new Error('Failed to send message - please try again');
-      }
-    }
-  };
-
   const isFormValid = Object.keys(formErrors).length === 0 && 
-                     Object.values(formData).every(value => value.trim() !== '');
+                     formData.name.trim() !== '' &&
+                     formData.email.trim() !== '' &&
+                     formData.subject.trim() !== '' &&
+                     formData.message.trim() !== '';
 
   return (
     <section id="contact" className={getThemeClasses(
@@ -183,7 +212,7 @@ function Contact() {
           'text-textLight-dark',
           'text-textLight-light'
         )}>
-          {t('contact.title')}
+          {translations.title}
         </h2>
         
         <div className="grid md:grid-cols-2 gap-12">
@@ -194,7 +223,7 @@ function Contact() {
               'text-textLight-dark',
               'text-textLight-light'
             )}>
-              {t('contact.contactInfo')}
+              {translations.contactInfo}
             </h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-4">
@@ -207,7 +236,7 @@ function Contact() {
                     'text-textLight-dark',
                     'text-textLight-light'
                   )}>
-                    {t('contact.email')}
+                    {translations.email}
                   </p>
                   <a href="mailto:david.fernandez-cuenca@example.com" className="text-accent hover:underline">
                     david.fernandez-cuenca@example.com
@@ -225,14 +254,14 @@ function Contact() {
                     'text-textLight-dark',
                     'text-textLight-light'
                   )}>
-                    {t('contact.location')}
+                    {translations.location}
                   </p>
                   <p className={getThemeClasses(
                     '',
                     'text-textMuted-dark',
                     'text-textMuted-light'
                   )}>
-                    {t('contact.locationValue')}
+                    {translations.locationValue}
                   </p>
                 </div>
               </div>
@@ -247,14 +276,14 @@ function Contact() {
                     'text-textLight-dark',
                     'text-textLight-light'
                   )}>
-                    {t('contact.availability')}
+                    {translations.availability}
                   </p>
                   <p className={getThemeClasses(
                     '',
                     'text-textMuted-dark',
                     'text-textMuted-light'
                   )}>
-                    {t('contact.availabilityValue')}
+                    {translations.availabilityValue}
                   </p>
                 </div>
               </div>
@@ -266,7 +295,7 @@ function Contact() {
                 'text-textLight-dark',
                 'text-textLight-light'
               )}>
-                {t('contact.followMe')}
+                {translations.followMe}
               </h4>
               <div className="flex space-x-4">
                 <a 
@@ -302,16 +331,16 @@ function Contact() {
           
           {/* Contact Form */}
           <div className={getThemeClasses(
-            'p-8 rounded-lg',
-            'bg-secondary-dark',
-            'bg-secondary-light'
+            'p-8 rounded-lg shadow-lg',
+            'bg-secondary-dark border border-secondary-dark/50',
+            'bg-secondary-light border border-secondary-light/50'
           )}>
             <h3 className={getThemeClasses(
               'text-2xl font-semibold mb-6',
               'text-textLight-dark',
               'text-textLight-light'
             )}>
-              {t('contact.sendMessage')}
+              {translations.sendMessage}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -320,7 +349,7 @@ function Contact() {
                   'text-textLight-dark',
                   'text-textLight-light'
                 )}>
-                  {t('contact.name')}
+                  {translations.name}
                 </label>
                 <input 
                   type="text" 
@@ -330,15 +359,16 @@ function Contact() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   required 
-                  className={`w-full px-4 py-3 bg-primary border rounded-lg focus:outline-none focus:border-accent transition ${
-                    touched.name && formErrors.name 
-                      ? 'border-red-500 focus:border-red-500' 
-                      : 'border-gray-600'
-                  }`}
+                  className={getThemeClasses(
+                    'w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition',
+                    'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
+                    'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
+                  )}
+                  placeholder="Tu nombre"
                   disabled={isSubmitting}
                 />
                 {touched.name && formErrors.name && (
-                  <p className="text-red-400 text-sm mt-1">{formErrors.name}</p>
+                  <p className="text-red-400 text-sm mt-1">{getTranslatedError(formErrors.name)}</p>
                 )}
               </div>
               
@@ -348,7 +378,7 @@ function Contact() {
                   'text-textLight-dark',
                   'text-textLight-light'
                 )}>
-                  {t('contact.email')}
+                  {translations.email}
                 </label>
                 <input 
                   type="email" 
@@ -358,15 +388,16 @@ function Contact() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   required 
-                  className={`w-full px-4 py-3 bg-primary border rounded-lg focus:outline-none focus:border-accent transition ${
-                    touched.email && formErrors.email 
-                      ? 'border-red-500 focus:border-red-500' 
-                      : 'border-gray-600'
-                  }`}
+                  className={getThemeClasses(
+                    'w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition',
+                    'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
+                    'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
+                  )}
+                  placeholder="tu@email.com"
                   disabled={isSubmitting}
                 />
                 {touched.email && formErrors.email && (
-                  <p className="text-red-400 text-sm mt-1">{formErrors.email}</p>
+                  <p className="text-red-400 text-sm mt-1">{getTranslatedError(formErrors.email)}</p>
                 )}
               </div>
               
@@ -376,7 +407,7 @@ function Contact() {
                   'text-textLight-dark',
                   'text-textLight-light'
                 )}>
-                  {t('contact.subject')}
+                  {translations.subject}
                 </label>
                 <input 
                   type="text" 
@@ -386,15 +417,16 @@ function Contact() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   required 
-                  className={`w-full px-4 py-3 bg-primary border rounded-lg focus:outline-none focus:border-accent transition ${
-                    touched.subject && formErrors.subject 
-                      ? 'border-red-500 focus:border-red-500' 
-                      : 'border-gray-600'
-                  }`}
+                  className={getThemeClasses(
+                    'w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition',
+                    'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
+                    'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
+                  )}
+                  placeholder="Asunto del mensaje"
                   disabled={isSubmitting}
                 />
                 {touched.subject && formErrors.subject && (
-                  <p className="text-red-400 text-sm mt-1">{formErrors.subject}</p>
+                  <p className="text-red-400 text-sm mt-1">{getTranslatedError(formErrors.subject)}</p>
                 )}
               </div>
               
@@ -404,7 +436,7 @@ function Contact() {
                   'text-textLight-dark',
                   'text-textLight-light'
                 )}>
-                  {t('contact.message')}
+                  {translations.message}
                 </label>
                 <textarea 
                   id="message" 
@@ -414,15 +446,16 @@ function Contact() {
                   onChange={handleInputChange}
                   onBlur={handleBlur}
                   required 
-                  className={`w-full px-4 py-3 bg-primary border rounded-lg focus:outline-none focus:border-accent transition resize-none ${
-                    touched.message && formErrors.message 
-                      ? 'border-red-500 focus:border-red-500' 
-                      : 'border-gray-600'
-                  }`}
+                  className={getThemeClasses(
+                    'w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition resize-none',
+                    'bg-primary-dark text-textLight-dark border border-secondary-dark placeholder-textMuted-dark',
+                    'bg-primary-light text-textLight-light border border-secondary-light placeholder-textMuted-light'
+                  )}
+                  placeholder="Tu mensaje aquí..."
                   disabled={isSubmitting}
                 />
                 {touched.message && formErrors.message && (
-                  <p className="text-red-400 text-sm mt-1">{formErrors.message}</p>
+                  <p className="text-red-400 text-sm mt-1">{getTranslatedError(formErrors.message)}</p>
                 )}
                 <div className={getThemeClasses(
                   'text-right text-sm mt-1',
@@ -441,7 +474,7 @@ function Contact() {
                 {isSubmitting && (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 )}
-                <span>{isSubmitting ? t('contact.sending') : t('contact.send')}</span>
+                <span>{isSubmitting ? translations.sending : translations.send}</span>
               </button>
             </form>
             
@@ -459,4 +492,7 @@ function Contact() {
       </div>
     </section>
   );
-} 
+}
+
+// Make Contact available globally
+window.Contact = Contact; 

@@ -1,6 +1,3 @@
-// Import useTranslation hook
-const { useTranslation } = await import('../i18n/useTranslation.js');
-
 // Navbar Component
 function Navbar() {
   const { theme, setTheme, language, setLanguage, mobileMenuOpen, setMobileMenuOpen } = useAppContext();
@@ -17,7 +14,12 @@ function Navbar() {
   };
 
   const toggleLanguage = () => {
-    setLanguage(language === 'es' ? 'en' : 'es');
+    const newLanguage = language === 'es' ? 'en' : 'es';
+    setLanguage(newLanguage);
+    // Use the global setLanguage function
+    if (window.setLanguage) {
+      window.setLanguage(newLanguage);
+    }
   };
 
   const toggleMobileMenu = () => {
@@ -155,4 +157,7 @@ function Navbar() {
       </div>
     </nav>
   );
-} 
+}
+
+// Make Navbar available globally
+window.Navbar = Navbar; 

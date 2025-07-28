@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Language Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background-color: #007bff; color: white; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .debug { background-color: #f8f9fa; color: #495057; border: 1px solid #dee2e6; font-family: monospace; }
+        .form-test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Form Language Test</h1>
+    <div id="results"></div>
+    
+    <div class="test-section">
+        <h2>Language State Monitor</h2>
+        <button class="btn-primary" onclick="monitorLanguage()">Start Language Monitoring</button>
+        <button class="btn-primary" onclick="testFormInteraction()">Test Form Interaction</button>
+        <div id="language-log"></div>
+    </div>
+
+    <div class="form-test">
+        <h2>Test Form</h2>
+        <input type="text" id="test-name" placeholder="Test Name" oninput="logLanguageChange('name input')" />
+        <input type="email" id="test-email" placeholder="Test Email" oninput="logLanguageChange('email input')" />
+        <textarea id="test-message" placeholder="Test Message" oninput="logLanguageChange('message input')"></textarea>
+    </div>
+
+    <!-- React -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Load locales first -->
+    <script type="text/babel" src="./src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="./src/i18n/locales/es.js"></script>
+    
+    <!-- Load i18n system -->
+    <script type="text/babel" src="./src/i18n/useTranslation.js"></script>
+
+    <script type="text/babel">
+        const results = document.getElementById('results');
+        const languageLog = document.getElementById('language-log');
+        
+        let languageHistory = [];
+        let monitoring = false;
+        
+        function addResult(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.className = `result debug`;
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            languageLog.appendChild(div);
+        }
+
+        function logLanguageChange(action) {
+            if (!monitoring) return;
+            
+            const currentLang = window.currentLanguage || 'unknown';
+            const localStorageLang = localStorage.getItem('lang') || 'unknown';
+            
+            const logMessage = `${action} - window.currentLanguage: ${currentLang}, localStorage: ${localStorageLang}`;
+            addLog(logMessage);
+            
+            languageHistory.push({
+                action,
+                currentLang,
+                localStorageLang,
+                timestamp: new Date().toLocaleTimeString()
+            });
+        }
+
+        function monitorLanguage() {
+            monitoring = true;
+            addResult('🔍 Starting language monitoring...', 'info');
+            addLog('Language monitoring started');
+            
+            // Monitor changes every 100ms
+            setInterval(() => {
+                const currentLang = window.currentLanguage || 'unknown';
+                const localStorageLang = localStorage.getItem('lang') || 'unknown';
+                
+                if (currentLang !== localStorageLang) {
+                    addLog(`⚠️ Language mismatch detected: window=${currentLang}, localStorage=${localStorageLang}`);
+                }
+            }, 100);
+        }
+
+        function testFormInteraction() {
+            addResult('🧪 Testing form interaction...', 'info');
+            
+            // Simulate typing in form fields
+            const testName = document.getElementById('test-name');
+            const testEmail = document.getElementById('test-email');
+            const testMessage = document.getElementById('test-message');
+            
+            if (testName && testEmail && testMessage) {
+                addLog('Simulating form input...');
+                
+                // Simulate typing
+                testName.value = 'Test User';
+                testName.dispatchEvent(new Event('input'));
+                
+                setTimeout(() => {
+                    testEmail.value = 'test@example.com';
+                    testEmail.dispatchEvent(new Event('input'));
+                }, 500);
+                
+                setTimeout(() => {
+                    testMessage.value = 'This is a test message';
+                    testMessage.dispatchEvent(new Event('input'));
+                }, 1000);
+                
+                addResult('✅ Form interaction test completed');
+            } else {
+                addResult('❌ Form elements not found', 'error');
+            }
+        }
+
+        // Auto-start monitoring
+        setTimeout(() => {
+            addResult('🚀 Initializing form language test...', 'info');
+            monitorLanguage();
+        }, 1000);
+    </script>
+</body>
+</html> 

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Language Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-panel { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            width: 300px; 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            padding: 15px; 
+            font-size: 12px; 
+            z-index: 1000;
+        }
+        .status { margin: 5px 0; padding: 5px; border-radius: 3px; }
+        .status.good { background: #d4edda; color: #155724; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .log { 
+            max-height: 200px; 
+            overflow-y: auto; 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 10px;
+        }
+        .form-test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        input, textarea { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <h3>🔍 Language Debug Panel</h3>
+        <div id="status"></div>
+        <div class="log" id="log"></div>
+    </div>
+
+    <h1>Debug Language Test</h1>
+    
+    <div class="form-test">
+        <h2>Test Form (Type here to test)</h2>
+        <input type="text" id="test-name" placeholder="Test Name" />
+        <input type="email" id="test-email" placeholder="Test Email" />
+        <textarea id="test-message" placeholder="Test Message"></textarea>
+    </div>
+
+    <!-- React -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Load locales first -->
+    <script type="text/babel" src="./src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="./src/i18n/locales/es.js"></script>
+    
+    <!-- Load i18n system -->
+    <script type="text/babel" src="./src/i18n/useTranslation.js"></script>
+
+    <script type="text/babel">
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+        
+        let lastLanguage = null;
+        let changeCount = 0;
+        
+        function addStatus(message, type = 'good') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            
+            // Keep only last 5 status messages
+            while (statusDiv.children.length > 5) {
+                statusDiv.removeChild(statusDiv.firstChild);
+            }
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(div);
+            
+            // Keep only last 20 log messages
+            while (logDiv.children.length > 20) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+            
+            // Auto-scroll to bottom
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function checkLanguageState() {
+            const currentLang = window.currentLanguage || 'unknown';
+            const localStorageLang = localStorage.getItem('lang') || 'unknown';
+            const reactContextLang = window.AppContext ? 'available' : 'unavailable';
+            
+            const status = {
+                currentLang,
+                localStorageLang,
+                reactContextLang,
+                changeCount
+            };
+            
+            // Check for language changes
+            if (lastLanguage && lastLanguage !== currentLang) {
+                changeCount++;
+                addLog(`⚠️ Language changed from ${lastLanguage} to ${currentLang} (change #${changeCount})`);
+                addStatus(`Language changed: ${lastLanguage} → ${currentLang}`, 'warning');
+            }
+            
+            lastLanguage = currentLang;
+            
+            // Check for inconsistencies
+            if (currentLang !== localStorageLang) {
+                addStatus(`Mismatch: window=${currentLang}, localStorage=${localStorageLang}`, 'error');
+            } else {
+                addStatus(`✅ Language sync: ${currentLang}`, 'good');
+            }
+            
+            return status;
+        }
+
+        // Monitor language state every 100ms
+        setInterval(() => {
+            checkLanguageState();
+        }, 100);
+
+        // Monitor form input events
+        document.addEventListener('input', (e) => {
+            if (e.target.id && e.target.id.startsWith('test-')) {
+                addLog(`📝 Form input: ${e.target.id} = "${e.target.value}"`);
+            }
+        });
+
+        // Initial status
+        setTimeout(() => {
+            addStatus('🚀 Debug panel initialized', 'good');
+            addLog('Language monitoring started');
+        }, 1000);
+    </script>
+</body>
+</html> 

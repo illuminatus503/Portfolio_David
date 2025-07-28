@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills Simple Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-panel { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            width: 300px; 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 5px; 
+            padding: 15px; 
+            font-size: 12px; 
+            z-index: 1000;
+        }
+        .status { margin: 5px 0; padding: 5px; border-radius: 3px; }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .log { 
+            max-height: 150px; 
+            overflow-y: auto; 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 10px;
+        }
+        .main-content { margin-right: 320px; }
+        .skills-container { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 2px solid #007bff; 
+            border-radius: 8px; 
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-panel">
+        <h3>🎯 Skills Simple Test</h3>
+        <div id="status"></div>
+        <div class="log" id="log"></div>
+        <button onclick="checkSkillsComponent()">Check Skills</button>
+        <button onclick="checkTranslations()">Check Translations</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Skills Component Simple Test</h1>
+        <p>This test verifies that the Skills component renders correctly.</p>
+        
+        <div class="skills-container">
+            <h2>Skills Component Test Area</h2>
+            <div id="skills-test-area">
+                <p>Loading Skills component...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- React -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Load locales first -->
+    <script type="text/babel" src="./src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="./src/i18n/locales/es.js"></script>
+    
+    <!-- Load i18n system -->
+    <script type="text/babel" src="./src/i18n/useTranslation.js"></script>
+
+    <script type="text/babel">
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+        
+        function addStatus(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            
+            while (statusDiv.children.length > 5) {
+                statusDiv.removeChild(statusDiv.firstChild);
+            }
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(div);
+            
+            while (logDiv.children.length > 15) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+            
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '';
+            addLog('Log cleared');
+        }
+
+        function checkSkillsComponent() {
+            addLog('🔍 Checking Skills component...');
+            
+            // Check if Skills component is available
+            if (window.Skills) {
+                addLog('✅ Skills component found');
+                addStatus('Skills component is available', 'success');
+                
+                // Check if it's a function
+                if (typeof window.Skills === 'function') {
+                    addLog('✅ Skills is a function');
+                } else {
+                    addLog('❌ Skills is not a function');
+                    addStatus('Skills is not a function', 'error');
+                }
+            } else {
+                addLog('❌ Skills component not found');
+                addStatus('Skills component not available', 'error');
+            }
+            
+            // Check if React is available
+            if (window.React) {
+                addLog('✅ React is available');
+            } else {
+                addLog('❌ React not found');
+                addStatus('React not available', 'error');
+            }
+            
+            // Check if ReactDOM is available
+            if (window.ReactDOM) {
+                addLog('✅ ReactDOM is available');
+            } else {
+                addLog('❌ ReactDOM not found');
+                addStatus('ReactDOM not available', 'error');
+            }
+        }
+
+        function checkTranslations() {
+            addLog('🌐 Checking translations...');
+            
+            // Check if locales are available
+            if (window.en) {
+                addLog('✅ English translations found');
+                addLog(`Skills title: ${window.en.skills?.title || 'Not found'}`);
+            } else {
+                addLog('❌ English translations not found');
+                addStatus('English translations not available', 'error');
+            }
+            
+            if (window.es) {
+                addLog('✅ Spanish translations found');
+                addLog(`Skills title: ${window.es.skills?.title || 'Not found'}`);
+            } else {
+                addLog('❌ Spanish translations not found');
+                addStatus('Spanish translations not available', 'error');
+            }
+            
+            // Check if translation function is available
+            if (window.t) {
+                addLog('✅ Translation function found');
+                try {
+                    const testTranslation = window.t('skills.title');
+                    addLog(`Test translation: ${testTranslation}`);
+                } catch (error) {
+                    addLog(`❌ Translation error: ${error.message}`);
+                }
+            } else {
+                addLog('❌ Translation function not found');
+                addStatus('Translation function not available', 'error');
+            }
+        }
+
+        // Try to render Skills component
+        function renderSkillsComponent() {
+            addLog('🎨 Attempting to render Skills component...');
+            
+            try {
+                const container = document.getElementById('skills-test-area');
+                
+                if (window.React && window.ReactDOM && window.Skills) {
+                    // Create a simple context for the component
+                    const mockContext = {
+                        theme: 'light',
+                        language: 'en'
+                    };
+                    
+                    // Mock useAppContext
+                    window.useAppContext = () => mockContext;
+                    
+                    // Render the component
+                    const root = window.ReactDOM.createRoot(container);
+                    root.render(window.React.createElement(window.Skills));
+                    
+                    addLog('✅ Skills component rendered');
+                    addStatus('Skills component rendered successfully', 'success');
+                } else {
+                    addLog('❌ Missing dependencies for rendering');
+                    addStatus('Cannot render - missing dependencies', 'error');
+                }
+            } catch (error) {
+                addLog(`❌ Render error: ${error.message}`);
+                addStatus('Render failed', 'error');
+            }
+        }
+
+        // Initialize
+        setTimeout(() => {
+            addStatus('🚀 Skills test initialized', 'success');
+            addLog('Skills test ready');
+            checkSkillsComponent();
+            checkTranslations();
+            
+            // Try to render after a delay
+            setTimeout(() => {
+                renderSkillsComponent();
+            }, 2000);
+        }, 1000);
+    </script>
+</body>
+</html> 

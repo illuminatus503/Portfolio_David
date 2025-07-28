@@ -1,6 +1,5 @@
 // Spanish translations
-export default {
-  // Navigation
+const es = {
   nav: {
     home: 'Inicio',
     about: 'Sobre mí',
@@ -8,16 +7,12 @@ export default {
     projects: 'Proyectos',
     contact: 'Contacto'
   },
-
-  // Hero section
   hero: {
     name: 'David Fernández-Cuenca Marcos',
     role: 'Ingeniero de Software en Indra',
     tagline: 'Especialista en sistemas críticos y control de tráfico aéreo',
     cta: 'Conectemos'
   },
-
-  // About section
   about: {
     title: 'Sobre mí',
     brief: 'Ingeniero de software con más de 10 años de experiencia en desarrollo backend, sistemas críticos y tecnologías emergentes.',
@@ -25,73 +20,80 @@ export default {
     readMore: 'Leer más',
     readLess: 'Leer menos'
   },
-
-  // Skills section
   skills: {
-    title: 'Habilidades Técnicas',
+    title: 'Habilidades y Tecnologías',
+    subtitle: 'Una visión completa de mi experiencia técnica en diferentes dominios',
+    categories: {
+      frontend: 'Frontend',
+      backend: 'Backend',
+      tools: 'Herramientas',
+      other: 'Otros'
+    },
+    summary: {
+      title: 'Experiencia Técnica',
+      description: 'Más de 10 años de experiencia en múltiples tecnologías y dominios'
+    },
     nodejs: {
       name: 'Node.js',
-      description: 'Backend & APIs REST',
-      details: 'Express, Fastify'
+      description: 'Desarrollo backend',
+      details: 'Express, APIs REST, microservicios'
     },
     python: {
       name: 'Python',
-      description: 'Automatización & ML',
-      details: 'Django, Flask, TensorFlow'
+      description: 'Procesamiento de datos',
+      details: 'Django, Flask, análisis de datos'
     },
     ada: {
-      name: 'Ada & C',
+      name: 'Ada',
       description: 'Sistemas críticos',
-      details: 'Embedded, Real-time'
+      details: 'Sistemas en tiempo real, software de seguridad crítica'
     },
     tailwind: {
       name: 'Tailwind CSS',
-      description: 'Diseño rápido',
-      details: 'Responsive, Utility-first'
+      description: 'Estilos modernos',
+      details: 'Framework CSS utility-first'
     },
     react: {
       name: 'React',
-      description: 'Interfaces dinámicas',
-      details: 'Hooks, Context, Redux'
+      description: 'Desarrollo frontend',
+      details: 'Desarrollo de UI basado en componentes'
     },
     git: {
-      name: 'Git & CI/CD',
+      name: 'Git',
       description: 'Control de versiones',
-      details: 'GitHub Actions, Jenkins'
+      details: 'GitHub, GitLab, desarrollo colaborativo'
     },
     databases: {
-      name: 'Databases',
-      description: 'SQL & NoSQL',
+      name: 'Bases de Datos',
+      description: 'Gestión de datos',
       details: 'PostgreSQL, MongoDB, Redis'
     },
     cloud: {
-      name: 'Cloud & DevOps',
-      description: 'Infraestructura',
-      details: 'AWS, Docker, Kubernetes'
+      name: 'Cloud',
+      description: 'Plataformas cloud',
+      details: 'AWS, Azure, Docker, Kubernetes'
     },
     ml: {
       name: 'Machine Learning',
-      description: 'IA & Análisis',
-      details: 'Neural Networks, NLP'
+      description: 'Desarrollo de IA',
+      details: 'TensorFlow, scikit-learn, NLP'
     },
     security: {
-      name: 'Security',
-      description: 'Ciberseguridad',
-      details: 'OAuth, JWT, HTTPS'
+      name: 'Seguridad',
+      description: 'Seguridad de aplicaciones',
+      details: 'OWASP, prácticas de codificación segura'
     },
     testing: {
       name: 'Testing',
-      description: 'Calidad de código',
-      details: 'Jest, PyTest, TDD'
+      description: 'Aseguramiento de calidad',
+      details: 'Testing unitario, testing de integración'
     },
     mobile: {
       name: 'Mobile',
       description: 'Desarrollo móvil',
-      details: 'React Native, Flutter'
+      details: 'React Native, aplicaciones móviles'
     }
   },
-
-  // Projects section
   projects: {
     title: 'Proyectos Destacados',
     repositories: 'Repositorios',
@@ -99,33 +101,11 @@ export default {
     commits: 'Commits (30 días)',
     viewOnGitHub: 'Ver en GitHub →',
     loading: 'Cargando proyectos...',
-    details: 'Detalles',
-    leetcode: {
-      title: 'LeetCode‑Exercises',
-      brief: 'Colección de soluciones a problemas de algoritmos y estructuras de datos.',
-      more: 'Más de 200 ejercicios resueltos con análisis de complejidad temporal y espacial, optimizaciones y explicaciones detalladas de las estrategias utilizadas.'
-    },
-    dataStructures: {
-      title: 'Basic‑Data‑Structures',
-      brief: 'Implementaciones educativas de estructuras de datos fundamentales.',
-      more: 'Implementaciones completas en Python, C++ y Ada de listas, pilas, colas, árboles y grafos, con ejemplos prácticos y documentación detallada.'
-    },
-    valet: {
-      title: 'valet',
-      brief: 'Suite de utilidades y herramientas de automatización para desarrollo.',
-      more: 'Herramientas CLI, scripts de automatización y librerías internas utilizadas en proyectos empresariales para optimizar flujos de trabajo de desarrollo.'
-    },
-    bachChorales: {
-      title: 'AARN23.BachChorales',
-      brief: 'Proyecto de machine learning para análisis musical.',
-      more: 'Sistema de clasificación de corales de Bach utilizando redes neuronales profundas y análisis avanzado de características musicales.'
-    }
+    details: 'Detalles'
   },
-
-  // Contact section
   contact: {
-    title: 'Contacto',
-    subtitle: '¿Interesado en colaborar o tienes alguna pregunta?',
+    title: 'Ponte en Contacto',
+    subtitle: '¿Interesado en colaborar o tienes preguntas?',
     contactInfo: 'Información de Contacto',
     email: 'Email',
     location: 'Ubicación',
@@ -152,13 +132,14 @@ export default {
       messageMinLength: 'El mensaje debe tener al menos 10 caracteres',
       messageMaxLength: 'El mensaje no puede exceder 1000 caracteres'
     },
-    networkError: 'Error de conexión. Verifica tu conexión a internet.',
+    networkError: 'Error de conexión. Por favor, verifica tu conexión a internet.',
     serverError: 'Error del servidor. Por favor, inténtalo más tarde.',
     rateLimitError: 'Demasiados intentos. Por favor, espera un momento.'
   },
-
-  // Footer
   footer: {
     copyright: '© {year} David Fernández-Cuenca Marcos. Todos los derechos reservados.'
   }
-}; 
+};
+
+// Make available globally
+window.es = es; 

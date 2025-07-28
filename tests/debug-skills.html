@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Skills Component</title>
+    <link rel="stylesheet" href="../dist/output.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .debug-panel { 
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            width: 400px; 
+            background: #fff; 
+            border: 2px solid #007bff; 
+            border-radius: 8px; 
+            padding: 15px; 
+            font-size: 12px; 
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .log { 
+            max-height: 300px; 
+            overflow-y: auto; 
+            background: #000; 
+            color: #0f0; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 10px;
+            border-radius: 4px;
+        }
+        .main-content { margin-right: 420px; }
+        .button { 
+            padding: 8px 16px; 
+            margin: 5px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-size: 12px;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-danger { background: #dc3545; color: white; }
+        .test-area {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            background: white;
+            min-height: 200px;
+        }
+        .error { color: #dc3545; }
+        .success { color: #28a745; }
+        .warning { color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <h3>🐛 Skills Debug Panel</h3>
+        <div id="status"></div>
+        <div class="log" id="log"></div>
+        <button class="button btn-primary" onclick="loadDependencies()">Load Dependencies</button>
+        <button class="button btn-success" onclick="testSkills()">Test Skills</button>
+        <button class="button btn-warning" onclick="checkTranslations()">Check Translations</button>
+        <button class="button btn-danger" onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="main-content">
+        <h1>Skills Component Debug</h1>
+        <p>This debug tool helps identify issues with the Skills component.</p>
+        
+        <div class="test-area">
+            <h2>Skills Component Test Area</h2>
+            <div id="skills-debug-area">
+                <p>Ready to test Skills component...</p>
+            </div>
+        </div>
+
+        <div class="test-area">
+            <h2>Dependency Status</h2>
+            <div id="dependency-status">
+                <p>Checking dependencies...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logDiv = document.getElementById('log');
+        const dependencyStatusDiv = document.getElementById('dependency-status');
+        
+        function addStatus(message, type = 'success') {
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = message;
+            statusDiv.appendChild(div);
+            
+            while (statusDiv.children.length > 5) {
+                statusDiv.removeChild(statusDiv.firstChild);
+            }
+        }
+
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logDiv.appendChild(div);
+            
+            while (logDiv.children.length > 20) {
+                logDiv.removeChild(logDiv.firstChild);
+            }
+            
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            logDiv.innerHTML = '';
+            addLog('Log cleared');
+        }
+
+        function updateDependencyStatus() {
+            const deps = {
+                'React': !!window.React,
+                'ReactDOM': !!window.ReactDOM,
+                'Skills Component': !!window.Skills,
+                'English Translations': !!window.en,
+                'Spanish Translations': !!window.es,
+                'Translation Function': !!window.t,
+                'App Context': !!window.useAppContext
+            };
+
+            let html = '<h3>Dependency Status:</h3>';
+            Object.entries(deps).forEach(([name, available]) => {
+                const status = available ? '✅ Available' : '❌ Missing';
+                const color = available ? 'success' : 'error';
+                html += `<p class="${color}">${name}: ${status}</p>`;
+            });
+
+            dependencyStatusDiv.innerHTML = html;
+        }
+
+        function loadDependencies() {
+            addLog('📦 Loading dependencies...');
+            
+            // Load React
+            if (!window.React) {
+                addLog('Loading React...');
+                const reactScript = document.createElement('script');
+                reactScript.src = 'https://unpkg.com/react@18/umd/react.development.js';
+                reactScript.crossOrigin = '';
+                document.head.appendChild(reactScript);
+            }
+
+            // Load ReactDOM
+            if (!window.ReactDOM) {
+                addLog('Loading ReactDOM...');
+                const reactDOMScript = document.createElement('script');
+                reactDOMScript.src = 'https://unpkg.com/react-dom@18/umd/react-dom.development.js';
+                reactDOMScript.crossOrigin = '';
+                document.head.appendChild(reactDOMScript);
+            }
+
+            // Load Babel
+            if (!window.Babel) {
+                addLog('Loading Babel...');
+                const babelScript = document.createElement('script');
+                babelScript.src = 'https://unpkg.com/@babel/standalone/babel.min.js';
+                document.head.appendChild(babelScript);
+            }
+
+            setTimeout(() => {
+                updateDependencyStatus();
+                addLog('Dependencies loaded');
+            }, 2000);
+        }
+
+        function checkTranslations() {
+            addLog('🌐 Checking translations...');
+            
+            if (window.en) {
+                addLog('✅ English translations loaded');
+                addLog(`Skills title: ${window.en.skills?.title || 'Not found'}`);
+            } else {
+                addLog('❌ English translations not loaded');
+            }
+
+            if (window.es) {
+                addLog('✅ Spanish translations loaded');
+                addLog(`Skills title: ${window.es.skills?.title || 'Not found'}`);
+            } else {
+                addLog('❌ Spanish translations not loaded');
+            }
+
+            if (window.t) {
+                addLog('✅ Translation function available');
+                try {
+                    const test = window.t('skills.title');
+                    addLog(`Test translation: ${test}`);
+                } catch (error) {
+                    addLog(`❌ Translation error: ${error.message}`);
+                }
+            } else {
+                addLog('❌ Translation function not available');
+            }
+        }
+
+        function testSkills() {
+            addLog('🎯 Testing Skills component...');
+            
+            if (!window.Skills) {
+                addLog('❌ Skills component not found');
+                addStatus('Skills component not available', 'error');
+                return;
+            }
+
+            addLog('✅ Skills component found');
+            
+            if (!window.React || !window.ReactDOM) {
+                addLog('❌ React dependencies not available');
+                addStatus('React dependencies not available', 'error');
+                return;
+            }
+
+            addLog('✅ React dependencies available');
+            
+            try {
+                const container = document.getElementById('skills-debug-area');
+                
+                // Create mock context
+                const mockContext = {
+                    theme: 'light',
+                    language: 'en'
+                };
+                
+                // Mock useAppContext
+                window.useAppContext = () => mockContext;
+                
+                // Render the component
+                const root = window.ReactDOM.createRoot(container);
+                root.render(window.React.createElement(window.Skills));
+                
+                addLog('✅ Skills component rendered');
+                addStatus('Skills component rendered successfully', 'success');
+                
+                // Check content after render
+                setTimeout(() => {
+                    const content = container.innerHTML;
+                    addLog(`Content length: ${content.length}`);
+                    addLog(`Contains 'Skills': ${content.includes('Skills')}`);
+                    addLog(`Contains 'Habilidades': ${content.includes('Habilidades')}`);
+                    
+                    if (content.length > 100) {
+                        addLog('✅ Component has substantial content');
+                    } else {
+                        addLog('⚠️ Component has minimal content');
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                addLog(`❌ Skills render error: ${error.message}`);
+                addLog(`Error stack: ${error.stack}`);
+                addStatus('Skills render failed', 'error');
+            }
+        }
+
+        // Initialize
+        setTimeout(() => {
+            addStatus('🚀 Debug tool initialized', 'success');
+            addLog('Debug tool ready');
+            updateDependencyStatus();
+        }, 1000);
+    </script>
+
+    <!-- Load locales first -->
+    <script type="text/babel" src="../src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="../src/i18n/locales/es.js"></script>
+    
+    <!-- Load i18n system -->
+    <script type="text/babel" src="../src/i18n/useTranslation.js"></script>
+
+    <!-- Load components -->
+    <script type="text/babel" src="../src/components/Skills.jsx"></script>
+</body>
+</html> 

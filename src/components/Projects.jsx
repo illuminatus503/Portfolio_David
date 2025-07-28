@@ -1,6 +1,3 @@
-// Import useTranslation hook
-const { useTranslation } = await import('../i18n/useTranslation.js');
-
 // Projects Component
 function Projects() {
   const { theme } = useAppContext();
@@ -290,4 +287,7 @@ function Projects() {
       </div>
     </section>
   );
-} 
+}
+
+// Make Projects available globally
+window.Projects = Projects; 

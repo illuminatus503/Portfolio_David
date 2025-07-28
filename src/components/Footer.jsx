@@ -1,6 +1,3 @@
-// Import useTranslation hook
-const { useTranslation } = await import('../i18n/useTranslation.js');
-
 // Footer Component
 function Footer() {
   const { theme } = useAppContext();
@@ -23,4 +20,7 @@ function Footer() {
       </div>
     </footer>
   );
-} 
+}
+
+// Make Footer available globally
+window.Footer = Footer; 
