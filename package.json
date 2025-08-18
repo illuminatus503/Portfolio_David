@@ -1,65 +1,26 @@
 {
-  "name": "david-fernandez-cuenca-portfolio",
+  "name": "portfolio-david",
   "version": "1.0.0",
-  "description": "David Fernández-Cuenca Marcos - Software Engineer Portfolio",
-  "main": "index.html",
-  "scripts": {
-    "dev": "npm run build:css && npx serve . -p 3000",
-    "build": "npm run build:css && echo 'Build completed - Static site ready for deployment'",
-    "build:css": "npx tailwindcss -i ./src/globals.css -o ./dist/output.css --minify",
-    "watch:css": "npx tailwindcss -i ./src/globals.css -o ./dist/output.css --watch",
-    "start": "npx serve . -p 3000",
-    "preview": "npx serve . -p 3000",
-    "lint": "npx eslint src/**/*.{js,jsx} --fix",
-    "type-check": "npx tsc --noEmit",
-    "format": "npx prettier --write src/**/*.{js,jsx,json,md,css}"
-  },
-  "keywords": [
-    "portfolio",
-    "react",
-    "software-engineer",
-    "air-traffic-control",
-    "indra",
-    "typescript",
-    "tailwind"
+  "description": "Portfolio personal de David Fernández-Cuenca",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "api"
   ],
-  "author": "David Fernández-Cuenca Marcos",
-  "license": "MIT",
-  "devDependencies": {
-    "@tailwindcss/aspect-ratio": "^0.4.2",
-    "@tailwindcss/forms": "^0.5.7",
-    "@tailwindcss/typography": "^0.5.10",
-    "@types/react": "^18.2.45",
-    "@types/react-dom": "^18.2.18",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
-    "autoprefixer": "^10.4.16",
-    "eslint": "^8.55.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "postcss": "^8.4.32",
-    "prettier": "^3.1.1",
-    "serve": "^14.2.1",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "nodemailer": "^6.9.7"
-  },
+
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18",
+    "pnpm": ">=9.0.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build", 
+    "start": "cd frontend && npm run start",
+    "api:dev": "vercel dev",
+    "deploy": "./deploy.sh"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.0"
+  },
+  "dependencies": {}
 }

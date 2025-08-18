@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.davidfdezcuenca.com/sitemap.xml
+
+# Disallow admin panel
+Disallow: /admin
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Allow important pages
+Allow: /
+Allow: /blog
+Allow: /projects
+Allow: /contact
+
+# Crawl delay
+Crawl-delay: 1

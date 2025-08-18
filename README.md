@@ -1,328 +1,275 @@
-# David Fernández-Cuenca Portfolio
+# 🚀 Portfolio de David Fernández-Cuenca
 
-A modern, responsive portfolio website built with React, Tailwind CSS, and TypeScript. Features dark/light mode, internationalization, and PWA capabilities.
+Portfolio profesional desarrollado con React, Node.js y diseñado para despliegue en Vercel.
 
-## 🚀 Quick Start
+## ✨ Características
+
+- **🌐 Multiidioma**: Soporte para español e inglés
+- **🌙 Modo Oscuro/Claro**: Tema adaptable
+- **📱 Responsive**: Diseño optimizado para móviles
+- **⚡ Performance**: Optimizado para velocidad
+- **🔐 Panel de Admin**: Gestión de contenido
+- **📧 Formulario de Contacto**: Integrado con nodemailer
+- **📊 Analytics**: Vercel Analytics + Google Analytics
+- **🎨 Tailwind CSS**: Diseño moderno y limpio
+
+## 🛠️ Tecnologías
+
+- **Frontend**: React 18, Tailwind CSS
+- **Backend**: Node.js, Vercel Functions
+- **Base de Datos**: PostgreSQL
+- **Despliegue**: Vercel
+- **Email**: Nodemailer + Gmail
+- **Autenticación**: JWT + bcrypt
+
+## 🚀 Despliegue en Vercel
+
+### 1. Preparación
 
 ```bash
-# Install dependencies
-npm install
+# Clonar el repositorio
+git clone <tu-repo>
+cd Portfolio_David
 
-# Start development server
-npm run dev
+# Instalar dependencias
+pnpm install
 
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+# Generar iconos y CSS (automático en build)
+pnpm run build
 ```
 
-## 📋 Table of Contents
+#### 🎨 **Generación Automática de Iconos**
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Development](#-development)
-- [Deployment](#-deployment)
-- [Customization](#-customization)
-- [Documentation](#-documentation)
-- [Contributing](#-contributing)
+El proyecto incluye un sistema de generación automática de iconos desde un SVG base:
 
-## ✨ Features
+- **📄 Archivo fuente**: `frontend/assets/favicon.svg`
+- **🛠️ Script**: `frontend/generate-icons.js`
+- **📦 Dependencia**: Sharp para conversión SVG → PNG
+- **🔄 Comando**: `pnpm run build:icons`
 
-### Core Features
-- **Responsive Design**: Mobile-first approach with adaptive layouts
-- **Dark/Light Mode**: Theme switching with system preference detection
-- **Internationalization**: Spanish and English language support
-- **PWA Ready**: Progressive Web App capabilities
-- **SEO Optimized**: Meta tags, Open Graph, and structured data
-- **Accessibility**: WCAG AA compliant with keyboard navigation
+**Iconos generados automáticamente:**
+- `favicon-16x16.png`
+- `favicon-32x32.png`
+- `apple-touch-icon.png`
+- `android-chrome-192x192.png`
+- `android-chrome-512x512.png`
+- `favicon.ico`
+- `site.webmanifest`
 
-### Technical Features
-- **React 18**: Modern React with hooks and context
-- **Tailwind CSS**: Utility-first styling with custom design system
-- **TypeScript**: Type safety and better development experience
-- **Vercel Ready**: Optimized for Vercel deployment
-- **Performance**: Optimized loading and rendering
-- **Analytics**: Google Analytics integration
+### 2. Variables de Entorno
 
-## 🛠 Tech Stack
+Configura las siguientes variables en el panel de Vercel:
 
-### Frontend
-- **React 18** - UI framework
-- **Tailwind CSS** - Styling framework
-- **TypeScript** - Type safety
-- **Babel** - JSX compilation
+```env
+# Base de Datos
+DATABASE_URL=postgresql://username:password@host:port/database
 
-### Development Tools
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **PostCSS** - CSS processing
-- **Autoprefixer** - CSS vendor prefixing
+# Email
+GMAIL_USER=tu-email@gmail.com
+GMAIL_APP_PASSWORD=tu-password-de-aplicacion
+RECIPIENT_EMAIL=tu-email@gmail.com
 
-### Deployment
-- **Vercel** - Hosting platform
-- **GitHub** - Version control
+# Autenticación
+JWT_SECRET=tu-jwt-secret-super-seguro
 
-## 📁 Project Structure
+# Analytics (Opcional)
+VERCEL_ANALYTICS_ID=tu-vercel-analytics-id
+GOOGLE_ANALYTICS_ID=tu-google-analytics-id
+```
+
+### 3. Base de Datos
+
+Configura las siguientes tablas en PostgreSQL:
+
+```sql
+-- Usuarios para admin
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role VARCHAR(50) DEFAULT 'admin',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Proyectos
+CREATE TABLE projects (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  technologies TEXT[],
+  github_url VARCHAR(255),
+  live_url VARCHAR(255),
+  image_url VARCHAR(255),
+  featured BOOLEAN DEFAULT false,
+  github_id BIGINT,
+  github_metadata JSONB,
+  order_index INTEGER DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Blog posts
+CREATE TABLE blog_posts (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  excerpt TEXT,
+  tags TEXT[],
+  published BOOLEAN DEFAULT false,
+  author_id INTEGER REFERENCES users(id),
+  image_url VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Mensajes de contacto
+CREATE TABLE contact_submissions (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  subject VARCHAR(255),
+  message TEXT NOT NULL,
+  language VARCHAR(10) DEFAULT 'es',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### 4. Usuario Admin
+
+Crea el primer usuario administrador:
+
+```sql
+INSERT INTO users (username, email, password, role) 
+VALUES (
+  'admin', 
+  'tu-email@gmail.com', 
+  '$2b$10$hashedpasswordhere', -- Usa bcrypt para hashear tu password
+  'admin'
+);
+```
+
+### 5. Despliegue
+
+1. Conecta tu repositorio a Vercel
+2. Configura las variables de entorno
+3. Despliega automáticamente
+
+## 🔧 Desarrollo Local
+
+```bash
+# Instalar dependencias
+pnpm install:all
+
+# Generar iconos + CSS
+cd frontend && pnpm run build
+
+# Ejecutar en desarrollo
+pnpm run dev
+```
+
+### 📝 **Comandos Disponibles**
+
+```bash
+# Frontend
+cd frontend
+pnpm run build:icons    # Generar iconos desde SVG
+pnpm run build:css      # Compilar Tailwind CSS
+pnpm run build          # Build completo (iconos + CSS)
+pnpm run dev            # Desarrollo con servidor local
+
+# Monorepo (desde root)
+pnpm run build          # Build frontend + API
+pnpm run dev            # Desarrollo completo
+```
+
+## 📁 Estructura del Proyecto
 
 ```
 Portfolio_David/
-├── 📄 README.md                 # Main documentation
-├── 📄 env.example               # Environment variables template
-├── 📄 index.html                # Entry point
-├── 📄 package.json              # Dependencies and scripts
-├── 📄 tailwind.config.js        # Tailwind configuration
-├── 📄 postcss.config.js         # PostCSS configuration
-├── 📄 vercel.json               # Vercel deployment config
-├── 📄 tsconfig.json             # TypeScript configuration
-├── 📄 .eslintrc.json            # ESLint configuration
-├── 📄 .prettierrc               # Prettier configuration
-├── 📄 .gitignore                # Git ignore rules
-├── 📄 site.webmanifest          # PWA manifest
-│
-├── 📁 api/                      # Vercel Functions
-│   └── 📄 contact.js            # Contact form API
-│
-├── 📁 src/                      # Source code
-│   ├── 📄 globals.css           # Global styles and Tailwind
-│   ├── 📄 App.jsx               # Main React component
-│   ├── 📄 types.d.ts            # TypeScript definitions
-│   ├── 📄 analytics.js          # Analytics utilities
-│   │
-│   ├── 📁 components/           # React components
-│   │   ├── 📄 Navbar.jsx        # Navigation component
-│   │   ├── 📄 Hero.jsx          # Hero section
-│   │   ├── 📄 About.jsx         # About section
-│   │   ├── 📄 Skills.jsx        # Skills section
-│   │   ├── 📄 Projects.jsx      # Projects section
-│   │   ├── 📄 Contact.jsx       # Contact section
-│   │   └── 📄 Footer.jsx        # Footer component
-│   │
-│   ├── 📁 i18n/                 # Internationalization
-│   │   ├── 📄 index.js          # i18n configuration
-│   │   ├── 📄 i18n.js           # Core i18n system
-│   │   ├── 📄 useTranslation.js # React hook
-│   │   └── 📁 locales/          # Translation files
-│   │       ├── 📄 en.js         # English translations
-│   │       └── 📄 es.js         # Spanish translations
-│   │
-│   └── 📁 services/             # API services
-│       ├── 📄 contactService.js # Contact form service
-│       └── 📄 gmailService.js   # Gmail integration
-│
-├── 📁 assets/                   # Static assets
-│   ├── 📄 favicon.ico           # Favicon
-│   ├── 📄 favicon.svg           # SVG favicon
-│   └── 📄 README.md             # Assets documentation
-│
-├── 📁 docs/                     # Documentation
-│   ├── 📁 setup/                # Setup guides
-│   │   ├── 📄 VERCEL_GMAIL_SETUP.md
-│   │   ├── 📄 THEME_GUIDE.md
-│   │   └── 📄 I18N_MIGRATION_SUMMARY.md
-│   ├── 📁 development/          # Development docs
-│   └── 📁 summaries/            # Project summaries
-│
-└── 📁 tests/                    # Test files
-    ├── 📄 contact-form.test.js  # Contact form tests
-    └── 📄 test-favicon.html     # Favicon testing
-```
-│   │
-│   └── 📁 services/             # API services
-│       └── 📄 contactService.js # Contact form API service
-│
-├── 📁 assets/                   # Static assets
-│   ├── 📄 README.md             # Assets documentation
-│   ├── 📄 favicon.svg           # Robot favicon
-│   ├── 📄 favicon-simple.svg    # Simple version
-│   ├── 📄 favicon.ico           # Traditional favicon
-│   ├── 📄 favicon-16x16.png     # 16x16 PNG favicon
-│   ├── 📄 favicon-32x32.png     # 32x32 PNG favicon
-│   ├── 📄 apple-touch-icon.png  # iOS touch icon
-│   ├── 📄 android-chrome-192x192.png # Android icon
-│   └── 📄 android-chrome-512x512.png # PWA icon
-│
-└── 📁 dist/                     # Build output
-    └── 📄 output.css            # Compiled CSS
+├── frontend/              # Aplicación React
+│   ├── src/
+│   │   ├── components/    # Componentes React
+│   │   ├── i18n/         # Internacionalización
+│   │   └── config/       # Configuración
+│   ├── assets/           # Assets estáticos
+│   ├── dist/            # CSS compilado
+│   └── *.html           # Páginas HTML
+├── api/                 # Funciones de API (Vercel)
+├── shared/              # Configuración compartida
+└── vercel.json          # Configuración de Vercel
 ```
 
-## 🚀 Development
+## 🎨 Personalización
 
-### Prerequisites
-- Node.js 16+ 
-- npm or yarn
+### Colores y Temas
 
-### Setup
-```bash
-# Clone repository
-git clone <repository-url>
-cd portfolio-react
+Edita `frontend/tailwind.config.js` para cambiar la paleta de colores:
 
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
+```js
+colors: {
+  primary: {
+    DEFAULT: '#0d0d0d',
+    dark: '#0d0d0d',
+    light: '#ffffff'
+  },
+  accent: {
+    DEFAULT: '#6366f1',
+    hover: '#4f46e5'
+  }
+}
 ```
 
-### Available Scripts
-```bash
-npm run dev          # Start development server with CSS build
-npm run build        # Build for production
-npm run build:css    # Build CSS only
-npm run watch:css    # Watch CSS changes
-npm run start        # Start production server
-npm run preview      # Preview production build
-npm run lint         # Lint code
-npm run type-check   # TypeScript type checking
-npm run format       # Format code
-```
+### Contenido
 
-### Development Workflow
-1. **Start Development**: `npm run dev`
-2. **Edit Components**: Modify files in `src/components/`
-3. **Update Styles**: Edit `src/globals.css` or use Tailwind classes
-4. **Test Changes**: Browser will auto-reload
-5. **Build**: `npm run build` for production
+1. **Información Personal**: Edita `frontend/src/config/environment.js`
+2. **Traducciones**: Modifica `frontend/src/i18n/locales/`
+3. **Proyectos**: Usa el panel de admin en `/admin`
 
-## 🚀 Deployment
+## 🔐 Panel de Administración
 
-### Vercel Deployment
-The project is optimized for Vercel deployment:
+Accede al panel de admin en `/admin` para:
 
-```bash
-# Install Vercel CLI
-npm i -g vercel
+- ✅ Gestionar proyectos
+- ✅ Sincronizar repositorios de GitHub
+- ✅ Crear y editar posts del blog
+- ✅ Ver mensajes de contacto
 
-# Deploy
-vercel
+## 📈 Analytics
 
-# Or connect GitHub repository for automatic deployments
-```
+El portfolio incluye soporte para:
 
-### Manual Deployment
-```bash
-# Build project
-npm run build
+- **Vercel Analytics**: Automático con Vercel
+- **Google Analytics 4**: Configura GOOGLE_ANALYTICS_ID
 
-# Deploy dist/ folder to your hosting provider
-```
+## 🛡️ Seguridad
 
-### Environment Variables
-No environment variables required for basic functionality.
+- Autenticación JWT para admin
+- Validación de formularios
+- Sanitización de datos
+- Rate limiting en APIs
+- Headers de seguridad
 
-### Contact Form
-The contact form is fully functional with the following features:
-- **Client-side validation** with real-time feedback
-- **Internationalization** support (Spanish/English)
-- **Error handling** for network and server errors
-- **Rate limiting** protection
-- **Accessibility** compliant with ARIA attributes
-- **Responsive design** for all devices
+## 🤝 Contribuir
 
-#### Backend Integration
-The form is prepared for backend integration:
-- **API service** in `src/services/contactService.js`
-- **Backend examples** in `BACKEND_INTEGRATION.md`
-- **Test suite** in `tests/contact-form.test.js`
-- **Environment configuration** in `env.example`
+1. Fork el proyecto
+2. Crea una rama feature (`git checkout -b feature/amazing-feature`)
+3. Commit tus cambios (`git commit -m 'Add amazing feature'`)
+4. Push a la rama (`git push origin feature/amazing-feature`)
+5. Abre un Pull Request
 
-To integrate with a real backend:
-1. Set up your API endpoint
-2. Update `REACT_APP_CONTACT_API` in environment variables
-3. Replace the simulation in `Contact.jsx`
-4. Test the integration
+## 📄 Licencia
 
-## 🎨 Customization
+Este proyecto está bajo la licencia MIT. Ver `LICENSE` para más detalles.
 
-### Colors and Theme
-Edit `tailwind.config.js` to customize:
-- Color palette
-- Typography
-- Spacing
-- Animations
-
-### Content
-Update component files in `src/components/`:
-- Personal information
-- Projects
-- Skills
-- Contact details
-
-### Styling
-Modify `src/globals.css` for:
-- Custom CSS
-- Component styles
-- Utility classes
-
-### Favicon
-Replace files in `assets/` directory:
-- `favicon.svg` - Main favicon
-- `favicon-simple.svg` - Simple version
-- PNG variants for different sizes
-
-## 📚 Documentation
-
-### Setup Guides
-- **[Gmail Setup](./docs/setup/VERCEL_GMAIL_SETUP.md)** - Configure Gmail with Vercel Functions
-- **[Theme Guide](./docs/setup/THEME_GUIDE.md)** - Theme system documentation
-- **[i18n Migration](./docs/setup/I18N_MIGRATION_SUMMARY.md)** - Internationalization setup
-
-### Environment Variables
-Copy `env.example` to `.env` and configure:
-- `GMAIL_USER` - Your Gmail email
-- `GMAIL_APP_PASSWORD` - Gmail App Password (16 characters)
-- `RECIPIENT_EMAIL` - Email to receive contact form messages (optional)
-- `GA_MEASUREMENT_ID` - Google Analytics ID (optional)
-
-### Key Features
-- **Theme System**: Dark/light mode with CSS variables
-- **Component Architecture**: Modular React components
-- **Styling Strategy**: Tailwind CSS with custom components
-- **Internationalization**: Multi-language support
-- **PWA Features**: Service worker and manifest
-
-## 🤝 Contributing
-
-### Development Setup
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
-
-### Code Standards
-- Follow ESLint rules
-- Use Prettier for formatting
-- Write TypeScript for type safety
-- Add comments for complex logic
-- Update documentation as needed
-
-### Testing
-- Test in multiple browsers
-- Verify responsive design
-- Check accessibility
-- Validate performance
-
-## 📄 License
-
-MIT License - see [LICENSE](./LICENSE) file for details.
-
-## 👨‍💻 Author
+## 👨‍💻 Autor
 
 **David Fernández-Cuenca Marcos**
-- Software Engineer specializing in air traffic control systems
-- 10+ years of experience in backend development
-- Expert in Python, Ada, C, and critical systems
-
-## 🔗 Links
-
-- **Portfolio**: [david-fernandez-cuenca.com](https://david-fernandez-cuenca.com)
-- **GitHub**: [@illuminatus503](https://github.com/illuminatus503)
-- **LinkedIn**: [David Fernández-Cuenca](https://linkedin.com/in/david-fernandez-cuenca)
+- 🌐 Website: [davidfdezcuenca.com](https://davidfdezcuenca.com)
+- 💼 LinkedIn: [david-cuenca-marcos](https://linkedin.com/in/david-cuenca-marcos-03b7121b5)
+- 🐙 GitHub: [@illuminatus503](https://github.com/illuminatus503)
+- 🐦 Twitter: [@illuminatus_503](https://x.com/illuminatus_503)
 
 ---
 
-**Built with ❤️ using React, Tailwind CSS, and TypeScript** 
+⭐ ¡Dale una estrella si te ha gustado este proyecto!

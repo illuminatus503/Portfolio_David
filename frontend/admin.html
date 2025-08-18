@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0d0d0d" />
+    <title>Admin Panel - David Fernández-Cuenca Portfolio</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Admin Panel para gestionar el portfolio de David Fernández-Cuenca" />
+    <meta name="robots" content="noindex, nofollow" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon-simple.svg" />
+    
+    <!-- Global CSS with Tailwind -->
+    <link rel="stylesheet" href="./dist/output.css">
+    
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body class="bg-primary text-textLight antialiased scroll-smooth">
+    <div id="root"></div>
+    
+    <!-- Locales (must be first) -->
+    <script type="text/babel" src="./src/i18n/locales/en.js"></script>
+    <script type="text/babel" src="./src/i18n/locales/es.js"></script>
+    
+    <!-- I18n System -->
+    <script type="text/babel" src="./src/i18n/useTranslation.js"></script>
+    
+    <!-- Environment Configuration -->
+    <script type="text/babel" src="./src/config/environment.js"></script>
+    
+    <!-- Validation Module -->
+    <script type="text/babel" src="./src/validation.js"></script>
+    
+    <!-- Admin Components -->
+    <script type="text/babel" src="./src/components/Admin.jsx"></script>
+    <script type="text/babel" src="./src/components/GitHubRepos.jsx"></script>
+    <script type="text/babel" src="./src/components/SEO.jsx"></script>
+    <script type="text/babel" src="./src/components/GoogleAnalytics.jsx"></script>
+    
+    <!-- Main Admin App Script -->
+    <script type="text/babel" src="./src/AdminApp.jsx"></script>
+    
+    <!-- Render AdminApp -->
+    <script type="text/babel">
+      // Render AdminApp in the root element
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<AdminApp />);
+    </script>
+  </body>
+</html>

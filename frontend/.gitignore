@@ -1,21 +1,16 @@
 # Dependencies
 node_modules/
 .pnpm-debug.log*
-*/node_modules/
 
 # Build outputs
-frontend/dist/
-*/dist/
-*/build/
+dist/
+build/
 
 # Generated assets (auto-generated from SVG sources)
-frontend/assets/favicon-*.png
-frontend/assets/apple-touch-icon.png
-frontend/assets/android-chrome-*.png
-frontend/assets/favicon.ico
-
-# Generated manifests
-frontend/site.webmanifest
+assets/favicon-*.png
+assets/apple-touch-icon.png
+assets/android-chrome-*.png
+assets/favicon.ico
 
 # Environment variables
 .env
@@ -90,12 +85,14 @@ jspm_packages/
 .cache
 .parcel-cache
 
-# Temporary files
-*.tmp
-*.temp
+# next.js build output
+.next
 
-# Build artifacts
-*.tsbuildinfo
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
 
 # Serverless directories
 .serverless
@@ -111,16 +108,3 @@ jspm_packages/
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
-
-# macOS
-*.dmg
-
-# Windows
-*.exe
-*.msi
-
-# Backup files
-*.bak
-*.backup
-*~
-.vercel

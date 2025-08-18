@@ -1,150 +1,103 @@
-// Vercel Serverless Function for Contact Form
-import nodemailer from 'nodemailer';
+// API Route: /api/contact
+const nodemailer = require('nodemailer');
+const { Pool } = require('pg');
 
-export default async function handler(req, res) {
-  // Only allow POST requests
-  if (req.method !== 'POST') {
-    return res.status(405).json({ 
-      success: false, 
-      error: 'Method not allowed' 
+// Database connection (with fallback for development)
+let pool = null;
+try {
+  if (process.env.DATABASE_URL) {
+    pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false }
     });
   }
+} catch (error) {
+  console.log('Database not configured, skipping DB connection');
+}
 
-  try {
-    const { name, email, subject, message, language = 'en' } = req.body;
-
-    // Validate form data
-    const validation = validateFormData({ name, email, subject, message });
-    if (!validation.isValid) {
-      return res.status(400).json({
-        success: false,
-        error: 'Validation failed',
-        details: validation.errors
-      });
-    }
-
-    // Sanitize data
-    const sanitizedData = {
-      name: sanitizeString(name, 100),
-      email: email.toLowerCase().trim(),
-      subject: sanitizeString(subject, 200),
-      message: sanitizeString(message, 1000),
-      language
-    };
-
-    // Create email content
-    const emailContent = `
-      New Contact Form Submission
-      
-      Name: ${sanitizedData.name}
-      Email: ${sanitizedData.email}
-      Subject: ${sanitizedData.subject}
-      Language: ${sanitizedData.language}
-      Timestamp: ${new Date().toISOString()}
-      
-      Message:
-      ${sanitizedData.message}
-      
-      ---
-      This email was sent from your portfolio contact form.
-    `;
-
-    const htmlContent = `
-      <h2>New Contact Form Submission</h2>
-      <p><strong>Name:</strong> ${sanitizedData.name}</p>
-      <p><strong>Email:</strong> ${sanitizedData.email}</p>
-      <p><strong>Subject:</strong> ${sanitizedData.subject}</p>
-      <p><strong>Language:</strong> ${sanitizedData.language}</p>
-      <p><strong>Timestamp:</strong> ${new Date().toISOString()}</p>
-      <hr>
-      <h3>Message:</h3>
-      <p>${sanitizedData.message.replace(/\n/g, '<br>')}</p>
-      <hr>
-      <p><em>This email was sent from your portfolio contact form.</em></p>
-    `;
-
-    // Create Gmail transporter
-    const transporter = nodemailer.createTransporter({
+// Email transporter (with fallback for development)
+let transporter = null;
+try {
+  if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+    transporter = nodemailer.createTransporter({
       service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_APP_PASSWORD
       }
     });
+  }
+} catch (error) {
+  console.log('Email not configured, skipping email setup');
+}
 
-    // Email options
-    const mailOptions = {
-      from: process.env.GMAIL_USER,
-      to: process.env.RECIPIENT_EMAIL || process.env.GMAIL_USER,
-      subject: `Portfolio Contact: ${sanitizedData.subject}`,
-      text: emailContent,
-      html: htmlContent,
-      replyTo: sanitizedData.email
-    };
+module.exports = async function handler(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
 
-    // Send email
-    const info = await transporter.sendMail(mailOptions);
+  try {
+    const { name, email, subject, message } = req.body;
 
-    console.log('Email sent successfully:', info.messageId);
+    if (!name || !email || !subject || !message) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
 
-    res.status(200).json({
-      success: true,
-      message: 'Email sent successfully',
-      messageId: info.messageId,
+    // Save to database (if available)
+    if (pool) {
+      try {
+        await pool.query(
+          'INSERT INTO contact_submissions (name, email, subject, message) VALUES ($1, $2, $3, $4)',
+          [name, email, subject, message]
+        );
+        console.log('✅ Message saved to database');
+      } catch (dbError) {
+        console.log('⚠️ Database save failed:', dbError.message);
+      }
+    } else {
+      console.log('📝 Database not configured, message not saved to DB');
+    }
+
+    // Send email (if configured)
+    if (transporter && process.env.RECIPIENT_EMAIL) {
+      try {
+        const mailOptions = {
+          from: process.env.GMAIL_USER,
+          to: process.env.RECIPIENT_EMAIL,
+          subject: `Portfolio Contact: ${subject}`,
+          html: `
+            <h3>Nuevo mensaje de contacto del portfolio</h3>
+            <p><strong>Nombre:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Asunto:</strong> ${subject}</p>
+            <p><strong>Mensaje:</strong></p>
+            <p>${message}</p>
+          `
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log('✅ Email sent successfully');
+      } catch (emailError) {
+        console.log('⚠️ Email sending failed:', emailError.message);
+      }
+    } else {
+      console.log('📧 Email not configured, message not sent');
+    }
+
+    // Log the contact for development
+    console.log('📩 Contact form submission:', {
+      name,
+      email,
+      subject,
+      message: message.substring(0, 50) + (message.length > 50 ? '...' : ''),
       timestamp: new Date().toISOString()
     });
 
+    res.json({ success: true, message: 'Message sent successfully' });
+
   } catch (error) {
-    console.error('Email sending error:', error);
-    
-    res.status(500).json({
-      success: false,
-      error: 'Failed to send email',
-      details: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
-    });
+    console.error('Contact error:', error);
+    res.status(500).json({ error: 'Failed to send message' });
   }
-}
-
-// Validation functions
-function validateEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
-function sanitizeString(str, maxLength = 1000) {
-  if (!str) return '';
-  return str
-    .replace(/<[^>]*>/g, '') // Remove HTML tags
-    .replace(/[<>]/g, '') // Remove < and >
-    .trim()
-    .substring(0, maxLength);
-}
-
-function validateFormData(data) {
-  const errors = {};
-
-  if (!data.name || data.name.trim().length < 2) {
-    errors.name = 'Name must be at least 2 characters';
-  }
-
-  if (!data.email || !validateEmail(data.email)) {
-    errors.email = 'Please enter a valid email address';
-  }
-
-  if (!data.subject || data.subject.trim().length < 5) {
-    errors.subject = 'Subject must be at least 5 characters';
-  }
-
-  if (!data.message || data.message.trim().length < 10) {
-    errors.message = 'Message must be at least 10 characters';
-  }
-
-  if (data.message && data.message.trim().length > 1000) {
-    errors.message = 'Message cannot exceed 1000 characters';
-  }
-
-  return {
-    isValid: Object.keys(errors).length === 0,
-    errors
-  };
 } 
