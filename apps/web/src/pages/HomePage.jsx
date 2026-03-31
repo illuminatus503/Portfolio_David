@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { profile, skills } from "@portfolio/shared";
 import { api } from "../lib/api.js";
 import { Badge, Banner, Button, Card, Input, Section, Textarea } from "../components/ui.jsx";
@@ -11,29 +12,24 @@ const emptyContact = {
 };
 
 export const HomePage = () => {
-  const [projects, setProjects] = useState([]);
-  const [posts, setPosts] = useState([]);
-  const [status, setStatus] = useState({ type: "idle", message: "" });
+  const [contactStatus, setContactStatus] = useState({ type: "idle", message: "" });
   const [contact, setContact] = useState(emptyContact);
 
-  useEffect(() => {
-    const load = async () => {
-      const [projectList, postList] = await Promise.all([
+  const contentQuery = useQuery({
+    queryKey: ["home-content"],
+    queryFn: async () => {
+      const [projects, posts] = await Promise.all([
         api.listProjects(),
         api.listPosts(true)
       ]);
-      setProjects(projectList);
-      setPosts(postList);
-    };
 
-    load().catch((error) => {
-      setStatus({ type: "error", message: error.message });
-    });
-  }, []);
+      return { projects, posts };
+    }
+  });
 
   const featuredProjects = useMemo(
-    () => projects.filter((item) => item.featured),
-    [projects]
+    () => (contentQuery.data?.projects ?? []).filter((item) => item.featured),
+    [contentQuery.data?.projects]
   );
 
   const handleChange = (event) => {
@@ -43,14 +39,14 @@ export const HomePage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setStatus({ type: "loading", message: "Sending message..." });
+    setContactStatus({ type: "loading", message: "Sending message..." });
 
     try {
       const result = await api.submitContact(contact);
-      setStatus({ type: "success", message: result.message });
+      setContactStatus({ type: "success", message: result.message });
       setContact(emptyContact);
     } catch (error) {
-      setStatus({ type: "error", message: error.message });
+      setContactStatus({ type: "error", message: error.message });
     }
   };
 
@@ -73,7 +69,14 @@ export const HomePage = () => {
         </div>
       </section>
 
-      {status.message ? <Banner tone={status.type === "error" ? "error" : "info"}>{status.message}</Banner> : null}
+      {contentQuery.isError ? (
+        <Banner tone="error">{contentQuery.error.message}</Banner>
+      ) : null}
+      {contactStatus.message ? (
+        <Banner tone={contactStatus.type === "error" ? "error" : "info"}>
+          {contactStatus.message}
+        </Banner>
+      ) : null}
 
       <Section title="About" subtitle="A portfolio should expose technical depth and product judgment, not just static cards.">
         <Card>
@@ -97,38 +100,50 @@ export const HomePage = () => {
       </Section>
 
       <Section title="Featured projects" subtitle="Live content served by the API">
-        <div className="grid grid-2">
-          {featuredProjects.map((project) => (
-            <Card key={project.id}>
-              <div className="card-header">
-                <h3>{project.title}</h3>
-                <Badge>{project.status}</Badge>
-              </div>
-              <p>{project.description}</p>
-              <div className="badge-row">
-                {project.technologies.map((tech) => (
-                  <Badge key={tech}>{tech}</Badge>
-                ))}
-              </div>
-            </Card>
-          ))}
-        </div>
+        {contentQuery.isLoading ? (
+          <Card>
+            <p>Loading featured projects...</p>
+          </Card>
+        ) : (
+          <div className="grid grid-2">
+            {featuredProjects.map((project) => (
+              <Card key={project.id}>
+                <div className="card-header">
+                  <h3>{project.title}</h3>
+                  <Badge>{project.status}</Badge>
+                </div>
+                <p>{project.description}</p>
+                <div className="badge-row">
+                  {project.technologies.map((tech) => (
+                    <Badge key={tech}>{tech}</Badge>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section title="Blog" subtitle="Published posts only">
-        <div className="grid grid-2">
-          {posts.map((post) => (
-            <Card key={post.id}>
-              <h3>{post.title}</h3>
-              <p>{post.excerpt}</p>
-              <div className="badge-row">
-                {post.tags.map((tag) => (
-                  <Badge key={tag}>{tag}</Badge>
-                ))}
-              </div>
-            </Card>
-          ))}
-        </div>
+        {contentQuery.isLoading ? (
+          <Card>
+            <p>Loading published posts...</p>
+          </Card>
+        ) : (
+          <div className="grid grid-2">
+            {(contentQuery.data?.posts ?? []).map((post) => (
+              <Card key={post.id}>
+                <h3>{post.title}</h3>
+                <p>{post.excerpt}</p>
+                <div className="badge-row">
+                  {post.tags.map((tag) => (
+                    <Badge key={tag}>{tag}</Badge>
+                  ))}
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </Section>
 
       <Section title="Contact" subtitle="Server-backed contact workflow with validation and rate limiting">

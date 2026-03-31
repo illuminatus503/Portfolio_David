@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api.js";
 import { Badge, Banner, Button, Card, Input, Section, Textarea } from "../components/ui.jsx";
 
@@ -29,11 +30,9 @@ const mapDelimited = (value) =>
     .filter(Boolean);
 
 export const AdminPage = () => {
+  const queryClient = useQueryClient();
   const [token, setToken] = useState(localStorage.getItem(tokenKey) ?? "");
   const [login, setLogin] = useState({ username: "", password: "" });
-  const [sessionChecked, setSessionChecked] = useState(false);
-  const [projects, setProjects] = useState([]);
-  const [posts, setPosts] = useState([]);
   const [projectForm, setProjectForm] = useState(blankProject);
   const [postForm, setPostForm] = useState(blankPost);
   const [editingProjectId, setEditingProjectId] = useState("");
@@ -41,39 +40,40 @@ export const AdminPage = () => {
   const [status, setStatus] = useState({ type: "idle", message: "" });
 
   const authenticated = Boolean(token);
+  const sessionQuery = useQuery({
+    queryKey: ["admin-session", token],
+    queryFn: () => api.getSession(token),
+    enabled: authenticated,
+    retry: false
+  });
+  const workspaceQuery = useQuery({
+    queryKey: ["admin-workspace"],
+    queryFn: async () => {
+      const [projects, posts] = await Promise.all([
+        api.listProjects(),
+        api.listPosts()
+      ]);
 
-  const load = async () => {
-    const [projectList, postList] = await Promise.all([
-      api.listProjects(),
-      api.listPosts()
-    ]);
-    setProjects(projectList);
-    setPosts(postList);
-  };
-
+      return { projects, posts };
+    },
+    enabled: authenticated && sessionQuery.isSuccess
+  });
   useEffect(() => {
-    if (!authenticated) {
-      setSessionChecked(true);
-      return;
+    if (authenticated && sessionQuery.isError) {
+      localStorage.removeItem(tokenKey);
+      queryClient.removeQueries({ queryKey: ["admin-session"] });
+      queryClient.removeQueries({ queryKey: ["admin-workspace"] });
+      setToken("");
     }
-
-    api
-      .getSession(token)
-      .then(() => load())
-      .catch(() => {
-        localStorage.removeItem(tokenKey);
-        setToken("");
-      })
-      .finally(() => setSessionChecked(true));
-  }, [authenticated, token]);
+  }, [authenticated, queryClient, sessionQuery.isError]);
 
   const editingProject = useMemo(
-    () => projects.find((item) => item.id === editingProjectId) ?? null,
-    [projects, editingProjectId]
+    () => (workspaceQuery.data?.projects ?? []).find((item) => item.id === editingProjectId) ?? null,
+    [workspaceQuery.data?.projects, editingProjectId]
   );
   const editingPost = useMemo(
-    () => posts.find((item) => item.id === editingPostId) ?? null,
-    [posts, editingPostId]
+    () => (workspaceQuery.data?.posts ?? []).find((item) => item.id === editingPostId) ?? null,
+    [workspaceQuery.data?.posts, editingPostId]
   );
 
   useEffect(() => {
@@ -106,7 +106,7 @@ export const AdminPage = () => {
 
   const handleProjectSubmit = async (event) => {
     event.preventDefault();
-    const saved = await api.saveProject(
+    await api.saveProject(
       {
         ...projectForm,
         id: editingProjectId || undefined,
@@ -118,15 +118,12 @@ export const AdminPage = () => {
     );
     setEditingProjectId("");
     setProjectForm(blankProject);
-    setProjects((current) => {
-      const filtered = current.filter((item) => item.id !== saved.id);
-      return [saved, ...filtered];
-    });
+    await queryClient.invalidateQueries({ queryKey: ["admin-workspace"] });
   };
 
   const handlePostSubmit = async (event) => {
     event.preventDefault();
-    const saved = await api.savePost(
+    await api.savePost(
       {
         ...postForm,
         id: editingPostId || undefined,
@@ -136,23 +133,20 @@ export const AdminPage = () => {
     );
     setEditingPostId("");
     setPostForm(blankPost);
-    setPosts((current) => {
-      const filtered = current.filter((item) => item.id !== saved.id);
-      return [saved, ...filtered];
-    });
+    await queryClient.invalidateQueries({ queryKey: ["admin-workspace"] });
   };
 
   const handleDeleteProject = async (id) => {
     await api.deleteProject(id, token);
-    setProjects((current) => current.filter((item) => item.id !== id));
+    await queryClient.invalidateQueries({ queryKey: ["admin-workspace"] });
   };
 
   const handleDeletePost = async (id) => {
     await api.deletePost(id, token);
-    setPosts((current) => current.filter((item) => item.id !== id));
+    await queryClient.invalidateQueries({ queryKey: ["admin-workspace"] });
   };
 
-  if (!sessionChecked) {
+  if (authenticated && sessionQuery.isPending) {
     return (
       <main className="page admin-page">
         <Section title="Private workspace" subtitle="Checking access.">
@@ -203,6 +197,9 @@ export const AdminPage = () => {
       {status.message ? (
         <Banner tone={status.type === "error" ? "error" : "info"}>{status.message}</Banner>
       ) : null}
+      {workspaceQuery.isError ? (
+        <Banner tone="error">{workspaceQuery.error.message}</Banner>
+      ) : null}
 
       <Section
         title="Projects"
@@ -213,6 +210,8 @@ export const AdminPage = () => {
             onClick={() => {
               localStorage.removeItem(tokenKey);
               setToken("");
+              queryClient.removeQueries({ queryKey: ["admin-session"] });
+              queryClient.removeQueries({ queryKey: ["admin-workspace"] });
             }}
           >
             Log out
@@ -282,7 +281,8 @@ export const AdminPage = () => {
           </Card>
           <Card>
             <div className="stack">
-              {projects.map((project) => (
+              {workspaceQuery.isLoading ? <p>Loading projects...</p> : null}
+              {(workspaceQuery.data?.projects ?? []).map((project) => (
                 <div className="list-item" key={project.id}>
                   <div>
                     <h3>{project.title}</h3>
@@ -360,7 +360,8 @@ export const AdminPage = () => {
           </Card>
           <Card>
             <div className="stack">
-              {posts.map((post) => (
+              {workspaceQuery.isLoading ? <p>Loading posts...</p> : null}
+              {(workspaceQuery.data?.posts ?? []).map((post) => (
                 <div className="list-item" key={post.id}>
                   <div>
                     <div className="card-header">

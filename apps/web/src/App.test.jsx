@@ -1,7 +1,9 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { App } from "./App.jsx";
+import { routerFuture } from "./lib/router-future.js";
 
 beforeEach(() => {
   vi.restoreAllMocks();
@@ -65,13 +67,27 @@ beforeEach(() => {
   );
 });
 
-describe("App routes", () => {
-  it("renders the public home content", async () => {
-    render(
-      <MemoryRouter initialEntries={["/"]}>
+const renderWithProviders = (initialEntries) => {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter future={routerFuture} initialEntries={initialEntries}>
         <App />
       </MemoryRouter>
-    );
+    </QueryClientProvider>
+  );
+};
+
+describe("App routes", () => {
+  it("renders the public home content", async () => {
+    renderWithProviders(["/"]);
 
     expect(screen.getByText("David Fernandez-Cuenca Marcos")).toBeInTheDocument();
 
@@ -82,11 +98,7 @@ describe("App routes", () => {
   });
 
   it("renders the private workspace shell on the private route", () => {
-    render(
-      <MemoryRouter initialEntries={["/studio-503"]}>
-        <App />
-      </MemoryRouter>
-    );
+    renderWithProviders(["/studio-503"]);
 
     expect(screen.getByText("Private workspace")).toBeInTheDocument();
     expect(screen.getByLabelText("Identifier")).toBeInTheDocument();
