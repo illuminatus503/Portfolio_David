@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { profile, skills } from "@portfolio/shared";
+import { Link } from "react-router-dom";
+import { apiConfig, profile, skills } from "@portfolio/shared";
 import { api } from "../lib/api.js";
 import { Badge, Banner, Button, Card, Input, Section, Textarea } from "../components/ui.jsx";
 
@@ -142,6 +143,13 @@ export const HomePage = () => {
           </form>
         </Card>
       </Section>
+
+      <footer className="site-footer">
+        <span>Operationally calm, intentionally low-profile.</span>
+        <Link className="admin-ghost-link" to={apiConfig.adminPath} aria-label="Private studio access">
+          .
+        </Link>
+      </footer>
     </main>
   );
 };
