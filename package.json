@@ -16,6 +16,11 @@
     "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@eslint/js": "^9.23.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.23.0",
+    "eslint-plugin-react": "^7.37.4",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.0.0"
   }
 }
