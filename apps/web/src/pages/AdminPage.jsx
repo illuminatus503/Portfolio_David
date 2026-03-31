@@ -149,10 +149,10 @@ export const AdminPage = () => {
           {status.message ? (
             <Banner tone={status.type === "error" ? "error" : "info"}>{status.message}</Banner>
           ) : null}
-          <Card>
+          <Card className="private-shell">
             <form className="form-grid" onSubmit={handleLogin}>
               <Input
-                label="Username"
+                label="Identifier"
                 name="username"
                 value={login.username}
                 onChange={(event) =>
@@ -160,7 +160,7 @@ export const AdminPage = () => {
                 }
               />
               <Input
-                label="Password"
+                label="Passphrase"
                 type="password"
                 name="password"
                 value={login.password}
@@ -168,7 +168,7 @@ export const AdminPage = () => {
                   setLogin((current) => ({ ...current, password: event.target.value }))
                 }
               />
-              <Button type="submit">Sign in</Button>
+              <Button type="submit">Continue</Button>
             </form>
           </Card>
         </Section>

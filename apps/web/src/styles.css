@@ -251,6 +251,11 @@ textarea {
   align-items: start;
 }
 
+.private-shell {
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
 @media (max-width: 900px) {
   .grid-2,
   .grid-3,
