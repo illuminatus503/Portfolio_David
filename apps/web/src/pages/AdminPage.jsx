@@ -145,7 +145,7 @@ export const AdminPage = () => {
   if (!authenticated) {
     return (
       <main className="page admin-page">
-        <Section title="Admin login" subtitle="Use the seeded development user to manage content locally.">
+        <Section title="Private workspace" subtitle="Restricted access.">
           {status.message ? (
             <Banner tone={status.type === "error" ? "error" : "info"}>{status.message}</Banner>
           ) : null}

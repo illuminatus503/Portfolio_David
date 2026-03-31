@@ -251,31 +251,6 @@ textarea {
   align-items: start;
 }
 
-.site-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 2rem 0 1rem;
-  color: #7f92ad;
-  font-size: 0.9rem;
-}
-
-.admin-ghost-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  color: rgba(127, 146, 173, 0.2);
-  transition: color 120ms ease, transform 120ms ease;
-}
-
-.admin-ghost-link:hover,
-.admin-ghost-link:focus-visible {
-  color: #7fc4ff;
-  transform: scale(1.15);
-}
-
 @media (max-width: 900px) {
   .grid-2,
   .grid-3,
