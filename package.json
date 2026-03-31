@@ -1,26 +1,21 @@
 {
   "name": "portfolio-david",
-  "version": "1.0.0",
-  "description": "Portfolio personal de David Fernández-Cuenca",
+  "version": "2.0.0",
   "private": true,
+  "description": "Portfolio de David con arquitectura ports and adapters",
   "workspaces": [
-    "frontend",
-    "api"
+    "apps/*",
+    "packages/*"
   ],
-
   "engines": {
-    "node": ">=18",
-    "pnpm": ">=9.0.0"
+    "node": ">=20"
   },
   "scripts": {
-    "dev": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build", 
-    "start": "cd frontend && npm run start",
-    "api:dev": "vercel dev",
-    "deploy": "./deploy.sh"
+    "dev": "concurrently -k -n api,web -c yellow,cyan \"npm run dev -w @portfolio/api\" \"npm run dev -w @portfolio/web\"",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {
-    "prettier": "^3.1.0"
-  },
-  "dependencies": {}
+    "concurrently": "^9.1.2"
+  }
 }
