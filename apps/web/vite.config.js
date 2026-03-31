@@ -9,5 +9,9 @@ export default defineConfig({
     proxy: {
       "/api": apiConfig.apiBaseUrl
     }
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: "./src/test-setup.js"
   }
 });
