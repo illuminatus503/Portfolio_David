@@ -1,19 +1,31 @@
 import { useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { profile, skills } from "@portfolio/shared";
+import { useForm } from "react-hook-form";
+import { contactInputSchema, profile, skills } from "@portfolio/shared";
 import { api } from "../lib/api.js";
-import { Badge, Banner, Button, Card, Input, Section, Textarea } from "../components/ui.jsx";
-
-const emptyContact = {
-  name: "",
-  email: "",
-  subject: "",
-  message: ""
-};
+import {
+  Badge,
+  Banner,
+  Button,
+  Card,
+  FieldError,
+  Input,
+  Section,
+  Textarea
+} from "../components/ui.jsx";
 
 export const HomePage = () => {
   const [contactStatus, setContactStatus] = useState({ type: "idle", message: "" });
-  const [contact, setContact] = useState(emptyContact);
+  const contactForm = useForm({
+    resolver: zodResolver(contactInputSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      subject: "",
+      message: ""
+    }
+  });
 
   const contentQuery = useQuery({
     queryKey: ["home-content"],
@@ -32,23 +44,17 @@ export const HomePage = () => {
     [contentQuery.data?.projects]
   );
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setContact((current) => ({ ...current, [name]: value }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = contactForm.handleSubmit(async (values) => {
     setContactStatus({ type: "loading", message: "Sending message..." });
 
     try {
-      const result = await api.submitContact(contact);
+      const result = await api.submitContact(values);
       setContactStatus({ type: "success", message: result.message });
-      setContact(emptyContact);
+      contactForm.reset();
     } catch (error) {
       setContactStatus({ type: "error", message: error.message });
     }
-  };
+  });
 
   return (
     <main className="page">
@@ -149,11 +155,25 @@ export const HomePage = () => {
       <Section title="Contact" subtitle="Server-backed contact workflow with validation and rate limiting">
         <Card>
           <form className="form-grid" onSubmit={handleSubmit}>
-            <Input label="Name" name="name" value={contact.name} onChange={handleChange} required />
-            <Input label="Email" name="email" type="email" value={contact.email} onChange={handleChange} required />
-            <Input label="Subject" name="subject" value={contact.subject} onChange={handleChange} required />
-            <Textarea label="Message" name="message" rows="6" value={contact.message} onChange={handleChange} required />
-            <Button type="submit">Send message</Button>
+            <div>
+              <Input label="Name" {...contactForm.register("name")} />
+              <FieldError message={contactForm.formState.errors.name?.message} />
+            </div>
+            <div>
+              <Input label="Email" type="email" {...contactForm.register("email")} />
+              <FieldError message={contactForm.formState.errors.email?.message} />
+            </div>
+            <div>
+              <Input label="Subject" {...contactForm.register("subject")} />
+              <FieldError message={contactForm.formState.errors.subject?.message} />
+            </div>
+            <div>
+              <Textarea label="Message" rows="6" {...contactForm.register("message")} />
+              <FieldError message={contactForm.formState.errors.message?.message} />
+            </div>
+            <Button type="submit" disabled={contactForm.formState.isSubmitting}>
+              {contactForm.formState.isSubmitting ? "Sending..." : "Send message"}
+            </Button>
           </form>
         </Card>
       </Section>

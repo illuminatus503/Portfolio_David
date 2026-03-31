@@ -228,6 +228,11 @@ textarea {
   resize: vertical;
 }
 
+.field-error {
+  color: #ff9aa2;
+  font-size: 0.85rem;
+}
+
 .form-grid {
   display: grid;
   gap: 1rem;

@@ -1,3 +1,44 @@
+import { z } from "zod";
+
+const nonEmptyString = z.string().trim().min(1);
+const optionalUrl = z
+  .string()
+  .trim()
+  .url()
+  .or(z.literal(""))
+  .optional()
+  .default("");
+
+export const projectInputSchema = z.object({
+  title: nonEmptyString,
+  description: z.string().trim().min(1),
+  technologies: z.array(nonEmptyString).default([]),
+  githubUrl: optionalUrl,
+  liveUrl: optionalUrl,
+  featured: z.boolean().default(false),
+  status: z.enum(["active", "draft", "archived"]).default("active")
+});
+
+export const blogPostInputSchema = z.object({
+  title: nonEmptyString,
+  excerpt: z.string().trim().min(1),
+  content: z.string().trim().min(1),
+  tags: z.array(nonEmptyString).default([]),
+  published: z.boolean().default(false)
+});
+
+export const contactInputSchema = z.object({
+  name: nonEmptyString,
+  email: z.string().trim().email(),
+  subject: nonEmptyString,
+  message: z.string().trim().min(10)
+});
+
+export const loginInputSchema = z.object({
+  username: nonEmptyString,
+  password: nonEmptyString
+});
+
 export const profile = {
   name: "David Fernandez-Cuenca Marcos",
   role: "Software Engineer",

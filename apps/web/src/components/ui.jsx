@@ -1,3 +1,5 @@
+import { forwardRef } from "react";
+
 export const Section = ({ title, subtitle, children, actions }) => (
   <section className="section">
     <div className="section-heading">
@@ -19,22 +21,25 @@ export const Button = ({ variant = "primary", className = "", ...props }) => (
   <button className={`button ${variant} ${className}`.trim()} {...props} />
 );
 
-export const Input = ({ label, ...props }) => (
+export const Input = forwardRef(({ label, ...props }, ref) => (
   <label className="field">
     <span>{label}</span>
-    <input {...props} />
+    <input ref={ref} {...props} />
   </label>
-);
+));
 
-export const Textarea = ({ label, ...props }) => (
+export const Textarea = forwardRef(({ label, ...props }, ref) => (
   <label className="field">
     <span>{label}</span>
-    <textarea {...props} />
+    <textarea ref={ref} {...props} />
   </label>
-);
+));
 
 export const Badge = ({ children }) => <span className="badge">{children}</span>;
 
 export const Banner = ({ tone = "info", children }) => (
   <div className={`banner ${tone}`}>{children}</div>
 );
+
+export const FieldError = ({ message }) =>
+  message ? <span className="field-error">{message}</span> : null;

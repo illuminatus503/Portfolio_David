@@ -1,7 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { loginInputSchema } from "@portfolio/shared";
 import { api } from "../lib/api.js";
-import { Badge, Banner, Button, Card, Input, Section, Textarea } from "../components/ui.jsx";
+import {
+  Badge,
+  Banner,
+  Button,
+  Card,
+  FieldError,
+  Input,
+  Section,
+  Textarea
+} from "../components/ui.jsx";
 
 const tokenKey = "portfolio-admin-token";
 
@@ -32,12 +44,18 @@ const mapDelimited = (value) =>
 export const AdminPage = () => {
   const queryClient = useQueryClient();
   const [token, setToken] = useState(localStorage.getItem(tokenKey) ?? "");
-  const [login, setLogin] = useState({ username: "", password: "" });
   const [projectForm, setProjectForm] = useState(blankProject);
   const [postForm, setPostForm] = useState(blankPost);
   const [editingProjectId, setEditingProjectId] = useState("");
   const [editingPostId, setEditingPostId] = useState("");
   const [status, setStatus] = useState({ type: "idle", message: "" });
+  const loginForm = useForm({
+    resolver: zodResolver(loginInputSchema),
+    defaultValues: {
+      username: "",
+      password: ""
+    }
+  });
 
   const authenticated = Boolean(token);
   const sessionQuery = useQuery({
@@ -92,17 +110,17 @@ export const AdminPage = () => {
     }
   }, [editingPost]);
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const handleLogin = loginForm.handleSubmit(async (values) => {
     try {
-      const result = await api.login(login);
+      const result = await api.login(values);
       localStorage.setItem(tokenKey, result.token);
       setToken(result.token);
+      loginForm.reset();
       setStatus({ type: "success", message: `Signed in as ${result.user.username}` });
     } catch (error) {
       setStatus({ type: "error", message: error.message });
     }
-  };
+  });
 
   const handleProjectSubmit = async (event) => {
     event.preventDefault();
@@ -167,24 +185,21 @@ export const AdminPage = () => {
           ) : null}
           <Card className="private-shell">
             <form className="form-grid" onSubmit={handleLogin}>
-              <Input
-                label="Identifier"
-                name="username"
-                value={login.username}
-                onChange={(event) =>
-                  setLogin((current) => ({ ...current, username: event.target.value }))
-                }
-              />
-              <Input
-                label="Passphrase"
-                type="password"
-                name="password"
-                value={login.password}
-                onChange={(event) =>
-                  setLogin((current) => ({ ...current, password: event.target.value }))
-                }
-              />
-              <Button type="submit">Continue</Button>
+              <div>
+                <Input label="Identifier" {...loginForm.register("username")} />
+                <FieldError message={loginForm.formState.errors.username?.message} />
+              </div>
+              <div>
+                <Input
+                  label="Passphrase"
+                  type="password"
+                  {...loginForm.register("password")}
+                />
+                <FieldError message={loginForm.formState.errors.password?.message} />
+              </div>
+              <Button type="submit" disabled={loginForm.formState.isSubmitting}>
+                {loginForm.formState.isSubmitting ? "Checking..." : "Continue"}
+              </Button>
             </form>
           </Card>
         </Section>

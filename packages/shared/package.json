@@ -5,5 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.js"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
   }
 }
