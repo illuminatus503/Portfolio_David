@@ -1,53 +1,50 @@
 # Portfolio_David
 
-Personal portfolio platform built with React, Node.js, PostgreSQL, and Vercel. The project includes a public-facing site plus an admin layer for managing projects, blog content, and contact submissions.
+Rebuild del portfolio de David sobre una estructura con `apps/web`, `apps/api` y paquetes compartidos para dominio y configuración. El objetivo es tener un flujo local estable con `npm dev`, una API coherente para el panel admin y una base clara para seguir separando frontend, backend e infraestructura.
 
-## Why it matters
-- Full-stack portfolio product instead of a static landing page.
-- Shows frontend, backend, content management, analytics, and deployment concerns in one repository.
-- Good showcase for web product engineering rather than isolated UI work.
+## Stack actual
 
-## Highlights
-- Bilingual experience.
-- Responsive design with light and dark themes.
-- Contact workflow with email integration.
-- Admin panel for projects and blog content.
-- PostgreSQL-backed content model.
-- Vercel deployment workflow.
+- `apps/web`: React + Vite
+- `apps/api`: Express modular
+- `packages/domain`: casos de uso y validación
+- `packages/shared`: seed data y configuración local compartida
 
-## Stack
-- React
-- Node.js
-- PostgreSQL
-- Tailwind CSS
-- Vercel Functions
+## Desarrollo local
 
-## Quick start
 ```bash
-pnpm install:all
-pnpm run build
-pnpm run dev
+npm install
+npm run dev
 ```
 
-## Environment
-The repository includes `vercel.env.example` for deployment-oriented variables.
+URLs locales:
 
-Main groups:
-- database: `DATABASE_URL`
-- email delivery: Gmail/SMTP variables
-- auth: `JWT_SECRET`
-- analytics: Vercel and Google Analytics variables
+- web: `http://localhost:4173`
+- api health: `http://localhost:4173/api/health`
 
-## Project structure
-```txt
-frontend/   React application
-api/        Serverless API functions
-shared/     Shared configuration and utilities
+Credenciales locales por defecto:
+
+- usuario: `admin`
+- contraseña: `admin123`
+
+## Base de datos
+
+La inicialización nueva está en `apps/api/migrations`.
+
+```bash
+npm run db:migrate -w @portfolio/api
 ```
 
-## Notes
-- The project includes asset generation scripts for icons and static branding files.
-- The admin area is intended for personal content management, not as a general multi-tenant CMS.
+Si `DATABASE_URL` no está definida, la API usa adapters en memoria para que el producto siga siendo navegable y administrable en local.
 
-## License
-MIT
+## Estado del backlog
+
+Issues creadas en GitHub:
+
+- `#1` arquitectura ports and adapters
+- `#2` rebuild frontend React compilado
+- `#3` rebuild API admin/public
+- `#4` mismatch admin/API en delete
+- `#5` contacto con fake-success
+- `#6` environment + encoding
+- `#7` migraciones SQL
+- `#8` tooling local
