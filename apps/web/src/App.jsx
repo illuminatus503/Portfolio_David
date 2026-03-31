@@ -1,7 +1,7 @@
 import { Routes, Route, Link, NavLink, Navigate } from "react-router-dom";
-import { apiConfig } from "@portfolio/shared";
 import { HomePage } from "./pages/HomePage.jsx";
 import { AdminPage } from "./pages/AdminPage.jsx";
+import { runtimeConfig } from "./lib/runtime-config.js";
 
 export const App = () => (
   <div className="app-shell">
@@ -16,8 +16,9 @@ export const App = () => (
 
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path={apiConfig.adminPath} element={<AdminPage />} />
+      <Route path={runtimeConfig.adminPath} element={<AdminPage />} />
       <Route path="/admin" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   </div>
 );
