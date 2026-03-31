@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "db:migrate": "node src/scripts/run-migrations.js",
+    "lint": "eslint src",
     "test": "vitest run"
   },
   "dependencies": {
