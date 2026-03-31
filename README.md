@@ -1,58 +1,72 @@
 # Portfolio_David
 
-Rebuild del portfolio de David sobre una estructura con `apps/web`, `apps/api` y paquetes compartidos para dominio y configuración. El objetivo es tener un flujo local estable con `npm dev`, una API coherente para el panel admin y una base clara para seguir separando frontend, backend e infraestructura.
+Portfolio rebuild for David on top of a split `web` and `api` architecture with shared contracts and domain logic.
 
-El stack heredado basado en `frontend/`, `api/` y `shared/` ya no forma parte del código activo y se ha retirado del repositorio para evitar rutas muertas, configuración duplicada y ruido arquitectónico.
+The active codebase is the rebuilt stack under `apps/` and `packages/`. The old `frontend/`, `api/` and `shared/` runtime was removed from the repository and is no longer part of local development or deployment.
 
-## Stack actual
+## Current stack
 
 - `apps/web`: React + Vite
-- `apps/api`: Express modular
-- `packages/domain`: casos de uso y validación
-- `packages/shared`: seed data y configuración local compartida
+- `apps/api`: Express + modular HTTP routes
+- `packages/domain`: use cases and domain-facing orchestration
+- `packages/shared`: shared schemas, seed data and runtime config
 
-## Desarrollo local
+## Local development
 
 ```bash
 npm install
 npm run dev
 ```
 
-URLs locales:
+Local URLs:
 
 - web: `http://localhost:4173`
-- api health: `http://localhost:4173/api/health`
+- API health through Vite proxy: `http://localhost:4173/api/health`
+- private workspace route: `http://localhost:4173/studio-503`
 
-Credenciales locales por defecto:
+Default local admin credentials:
 
-- usuario: `admin`
-- contraseña: `admin123`
+- username: `admin`
+- password: `admin123`
 
-## Base de datos
+## Environment
 
-La inicialización nueva está en `apps/api/migrations`.
-
-```bash
-npm run db:migrate -w @portfolio/api
-```
-
-Si `DATABASE_URL` no está definida, la API usa adapters en memoria para que el producto siga siendo navegable y administrable en local.
-
-Variables de entorno base:
+Copy the base environment file before running local services:
 
 ```bash
 cp .env.example .env
 ```
 
-## Estado del backlog
+Important variables:
 
-Issues creadas en GitHub:
+- `API_PORT`
+- `VITE_ADMIN_PATH`
+- `JWT_SECRET`
+- `DATABASE_URL` (optional, enables PostgreSQL adapters)
+- `GMAIL_USER`, `GMAIL_APP_PASSWORD`, `RECIPIENT_EMAIL` (optional, enables email delivery)
 
-- `#1` arquitectura ports and adapters
-- `#2` rebuild frontend React compilado
-- `#3` rebuild API admin/public
-- `#4` mismatch admin/API en delete
-- `#5` contacto con fake-success
-- `#6` environment + encoding
-- `#7` migraciones SQL
-- `#8` tooling local
+## Database
+
+Run migrations for PostgreSQL-backed local development:
+
+```bash
+npm run db:migrate -w @portfolio/api
+```
+
+If `DATABASE_URL` is not defined, the API falls back to in-memory adapters so the product remains usable in local development.
+
+## Quality checks
+
+```bash
+npm run lint
+npm run test
+```
+
+`npm build` is intentionally not part of the current workflow. The local reference workflow is the stable `npm run dev` environment.
+
+## Documentation
+
+- [Architecture](./docs/architecture.md)
+- [Progress](./docs/progress.md)
+- [Workflow](./docs/workflow.md)
+- [Agents guide](./AGENTS.md)
