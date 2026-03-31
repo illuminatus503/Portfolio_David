@@ -2,6 +2,8 @@
 
 Rebuild del portfolio de David sobre una estructura con `apps/web`, `apps/api` y paquetes compartidos para dominio y configuración. El objetivo es tener un flujo local estable con `npm dev`, una API coherente para el panel admin y una base clara para seguir separando frontend, backend e infraestructura.
 
+El stack heredado basado en `frontend/`, `api/` y `shared/` ya no forma parte del código activo y se ha retirado del repositorio para evitar rutas muertas, configuración duplicada y ruido arquitectónico.
+
 ## Stack actual
 
 - `apps/web`: React + Vite
@@ -35,6 +37,12 @@ npm run db:migrate -w @portfolio/api
 ```
 
 Si `DATABASE_URL` no está definida, la API usa adapters en memoria para que el producto siga siendo navegable y administrable en local.
+
+Variables de entorno base:
+
+```bash
+cp .env.example .env
+```
 
 ## Estado del backlog
 
