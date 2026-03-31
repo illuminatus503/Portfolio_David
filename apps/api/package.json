@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/server.js",
+    "db:migrate": "node src/scripts/run-migrations.js",
     "test": "vitest run"
   },
   "dependencies": {
