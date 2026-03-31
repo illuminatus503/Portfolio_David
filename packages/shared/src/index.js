@@ -76,6 +76,7 @@ export const apiConfig = {
   webPort: 4173,
   apiPort: 4174,
   apiBaseUrl: "http://127.0.0.1:4174",
+  adminPath: "/studio-503",
   defaultJwtSecret: "dev-secret-change-me",
   defaultAdminPassword: "admin123"
 };
