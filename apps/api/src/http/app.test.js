@@ -22,4 +22,10 @@ describe("API", () => {
     expect(response.statusCode).toBe(400);
     expect(response.body.error.code).toBe("VALIDATION_ERROR");
   });
+
+  it("returns 401 for auth session without token", async () => {
+    const response = await request(app).get("/api/auth/session");
+    expect(response.statusCode).toBe(401);
+    expect(response.body.error.code).toBe("AUTH_REQUIRED");
+  });
 });

@@ -30,7 +30,8 @@ const mapDelimited = (value) =>
 
 export const AdminPage = () => {
   const [token, setToken] = useState(localStorage.getItem(tokenKey) ?? "");
-  const [login, setLogin] = useState({ username: "admin", password: "admin123" });
+  const [login, setLogin] = useState({ username: "", password: "" });
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [projects, setProjects] = useState([]);
   const [posts, setPosts] = useState([]);
   const [projectForm, setProjectForm] = useState(blankProject);
@@ -52,10 +53,19 @@ export const AdminPage = () => {
 
   useEffect(() => {
     if (!authenticated) {
+      setSessionChecked(true);
       return;
     }
-    load().catch((error) => setStatus({ type: "error", message: error.message }));
-  }, [authenticated]);
+
+    api
+      .getSession(token)
+      .then(() => load())
+      .catch(() => {
+        localStorage.removeItem(tokenKey);
+        setToken("");
+      })
+      .finally(() => setSessionChecked(true));
+  }, [authenticated, token]);
 
   const editingProject = useMemo(
     () => projects.find((item) => item.id === editingProjectId) ?? null,
@@ -141,6 +151,18 @@ export const AdminPage = () => {
     await api.deletePost(id, token);
     setPosts((current) => current.filter((item) => item.id !== id));
   };
+
+  if (!sessionChecked) {
+    return (
+      <main className="page admin-page">
+        <Section title="Private workspace" subtitle="Checking access.">
+          <Card className="private-shell">
+            <p>Verifying session...</p>
+          </Card>
+        </Section>
+      </main>
+    );
+  }
 
   if (!authenticated) {
     return (

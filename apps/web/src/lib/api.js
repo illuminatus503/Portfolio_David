@@ -16,6 +16,15 @@ export const api = {
       })
     );
   },
+  async getSession(token) {
+    return readJson(
+      await fetch("/api/auth/session", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+    );
+  },
   async listProjects() {
     return readJson(await fetch("/api/projects"));
   },
